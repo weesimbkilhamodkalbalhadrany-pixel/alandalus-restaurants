@@ -3,24 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>مطاعم وبروست الاندلس | التوصيل الذكي</title>
+    <title>مطاعم وبروست الاندلس | التوصيل الذكي 2026</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         /* ================================================================
-           هوية الاندلس البصرية — مطابقة للصورة المرفقة
+           هوية الاندلس البصرية — نسخة فاخرة 2026
         ================================================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         html { scroll-behavior: smooth; }
-        body { 
-            background-color: #fdfbf7; 
-            color: var(--dark); 
-            direction: rtl; 
-            padding-bottom: 80px; 
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c69a44' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
+        body { background: var(--bg-light); color: var(--dark); direction: rtl; padding-bottom: 96px; }
         :root {
             --primary: #7c1329;
             --primary-light: #a3213c;
@@ -29,21 +23,24 @@
             --gold: #c69a44;
             --gold-light: #e6c579;
             --gold-deep: #93701f;
-            --bg-light: #fdfbf7;
-            --paper: #ffffff;
+            --bg-light: #faf6ee;
+            --paper: #fffdfa;
             --white: #ffffff;
             --dark: #241a17;
             --gray: #7a716d;
             --gray-light: #ece4d8;
-            --line: #f0e6d8;
+            --line: #ece2d3;
             --danger: #e0453f;
             --success: #16966a;
             --warning: #d98a1f;
             --info: #2f6fce;
             --purple: #7c4fd1;
-            --shadow: 0 4px 14px -4px rgba(124,19,41,0.08);
-            --shadow-md: 0 10px 24px -8px rgba(124,19,41,0.15);
-            --shadow-lg: 0 20px 40px -12px rgba(44,7,16,0.25);
+            --shadow: 0 4px 14px -4px rgba(76,12,26,0.10);
+            --shadow-md: 0 14px 30px -10px rgba(76,12,26,0.18);
+            --shadow-lg: 0 24px 48px -12px rgba(44,7,16,0.28);
+            --glass-bg: rgba(255,255,255,0.86);
+            --glass-border: rgba(255,255,255,0.3);
+            --glass-shadow: 0 8px 32px rgba(44,7,16,0.14);
             --gradient-primary: linear-gradient(135deg, var(--primary-light), var(--primary) 55%, var(--primary-dark));
             --gradient-gold: linear-gradient(135deg, var(--gold-light), var(--gold) 60%, var(--gold-deep));
             --gradient-dark: linear-gradient(160deg, var(--primary-deep), var(--primary-dark));
@@ -53,221 +50,520 @@
             --radius-xl: 34px;
             --transition-fast: 0.15s;
             --transition-normal: 0.25s;
+            --transition-slow: 0.4s;
         }
 
         ::selection { background: var(--gold); color: var(--primary-dark); }
 
+        /* ===== زخرفة هندسية متكررة (خلفية خفيفة) ===== */
+        .andalus-pattern {
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(198,154,68,0.06) 0, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(124,19,41,0.05) 0, transparent 45%);
+        }
+
         /* ===== شاشة التحميل العامة ===== */
         .loading-overlay {
             position: fixed; inset: 0;
-            background: rgba(253, 251, 247, 0.9);
-            backdrop-filter: blur(8px);
+            background: rgba(28, 8, 14, 0.78);
+            backdrop-filter: blur(12px);
             z-index: 99999;
             display: none; align-items: center; justify-content: center;
             flex-direction: column; gap: 18px;
         }
         .loading-overlay.active { display: flex; animation: fadeInLoading 0.2s ease; }
         @keyframes fadeInLoading { from { opacity: 0; } to { opacity: 1; } }
-        .loading-spinner-container { position: relative; width: 70px; height: 70px; }
+        .loading-spinner-container { position: relative; width: 84px; height: 84px; }
         .loading-spinner-ring {
-            width: 70px; height: 70px; border-radius: 50%;
-            border: 4px solid rgba(198,154,68,0.2);
-            border-top-color: var(--primary);
+            width: 84px; height: 84px; border-radius: 50%;
+            border: 4px solid rgba(230,197,121,0.15);
+            border-top-color: var(--gold-light);
             animation: spin 0.9s linear infinite;
+        }
+        .loading-spinner-ring::before {
+            content: ''; position: absolute; top: 9px; left: 9px; right: 9px; bottom: 9px;
+            border-radius: 50%; border: 4px solid rgba(255,255,255,0.08);
+            border-bottom-color: var(--white);
+            animation: spin 0.6s linear infinite reverse;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .loading-icon {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 1.6rem; color: var(--primary);
+            font-size: 1.9rem; color: var(--gold-light);
+            animation: pulseIcon 1s ease-in-out infinite;
         }
-        .loading-text { color: var(--primary); font-size: 1rem; font-weight: 800; text-align: center; }
-        .loading-subtext { color: var(--gray); font-size: 0.8rem; font-weight: 600; text-align: center; }
+        @keyframes pulseIcon {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.7; }
+        }
+        .loading-text { color: white; font-size: 1.08rem; font-weight: 800; text-align: center; max-width: 280px; line-height: 1.6; }
+        .loading-subtext { color: rgba(255,255,255,0.68); font-size: 0.85rem; font-weight: 500; text-align: center; }
+        .loading-spinner {
+            display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+            border: 2px solid var(--gray-light); border-top-color: var(--primary);
+            animation: spin 0.7s linear infinite; vertical-align: middle;
+        }
 
         /* ================================================================
-           الهيدر / الشعار (مطابق للصورة)
+           الهيرو / الشعار
         ================================================================ */
         .hero-wrap {
             position: relative;
-            background: transparent;
-            padding: 20px 18px 10px;
-            text-align: center;
+            background: var(--gradient-dark);
+            padding: 26px 18px 40px;
+            overflow: hidden;
+            border-radius: 0 0 34px 34px;
+            box-shadow: 0 12px 30px -8px rgba(28,7,14,0.45);
         }
-        .hero-topbar { display: none; }
-        
-        .hero-brand { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        /* شعار الأندلس (SVG) */
-        .brand-logo-svg { width: 200px; height: 110px; margin: 0 auto; display: block; filter: drop-shadow(0 4px 8px rgba(124,19,41,0.15)); }
-        
-        .welcome-msg { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-top: 15px; margin-bottom: 15px; }
-        
+        .hero-wrap::before {
+            content: '';
+            position: absolute; inset: 0;
+            opacity: 0.16;
+            background-image:
+                repeating-linear-gradient(45deg, rgba(230,197,121,0.5) 0 1.5px, transparent 1.5px 26px),
+                repeating-linear-gradient(-45deg, rgba(230,197,121,0.5) 0 1.5px, transparent 1.5px 26px);
+            mix-blend-mode: soft-light;
+        }
+        .hero-wrap::after {
+            content: '';
+            position: absolute; top: -60px; left: -40px; width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(230,197,121,0.25), transparent 70%);
+        }
+        .hero-topbar { position: relative; display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; z-index: 2; }
+        .hero-badge {
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+            color: var(--gold-light); font-size: 0.68rem; font-weight: 800;
+            padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(230,197,121,0.35);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .hero-brand { position: relative; display: flex; align-items: center; gap: 14px; z-index: 2; }
+        .brand-mark { width: 68px; height: 68px; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4)); }
+        .brand-text { flex: 1; min-width: 0; }
+        .brand-name {
+            font-size: 1.32rem; font-weight: 900; line-height: 1.25;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            text-shadow: 0 2px 18px rgba(198,154,68,0.25);
+        }
+        .brand-name span { display: block; font-size: 1.5rem; }
+        .brand-tagline { color: rgba(255,255,255,0.72); font-size: 0.76rem; font-weight: 600; margin-top: 4px; }
+        .hero-badges-row { position: relative; display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; z-index: 2; }
+        .trust-badge {
+            flex: 1; min-width: 96px; background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
+            padding: 8px 10px; text-align: center; color: #f3ead9;
+            font-size: 0.66rem; font-weight: 700;
+        }
+        .trust-badge i { display: block; color: var(--gold-light); font-size: 1rem; margin-bottom: 4px; }
+
         /* ===== شريط البحث ===== */
-        .search-wrapper { padding: 0 16px; margin-bottom: 20px; }
-        .search-container { background: var(--paper); border: 1.5px solid var(--gold-light); border-radius: 50px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(198,154,68,0.1); }
-        .search-container input { border: none; background: transparent; flex: 1; padding: 4px; font-size: 0.9rem; color: var(--primary); width: 100%; text-align: right; outline: none; font-weight: 600; }
+        .search-wrapper { padding: 0 16px; margin-top: -24px; position: relative; z-index: 10; }
+        .search-container {
+            background: var(--paper); border: 1px solid var(--line); border-radius: 24px;
+            padding: 13px 20px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: var(--shadow-md);
+        }
+        .search-container input { border: none; background: transparent; flex: 1; padding: 4px; font-size: 0.92rem; color: var(--dark); width: 100%; text-align: right; outline: none; font-weight: 600; }
         .search-container input::placeholder { color: #a89e94; font-weight: 500; }
-        .search-icon { color: var(--gold); font-size: 1.1rem; margin-right: 8px; }
+        .search-icon { color: var(--gold-deep); font-size: 1.1rem; margin-right: 8px; }
 
         /* ===== حاوية التطبيق ===== */
-        .container { padding: 0 14px 90px; max-width: 600px; margin: 0 auto; }
+        .container { padding: 18px 14px 90px; max-width: 600px; margin: 0 auto; }
         .page { display: none; animation: fadeIn 0.35s ease-out; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== السلايدر ===== */
-        .promo-slider-container { margin: 4px 0 24px; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); background: var(--bg-light); position: relative; direction: ltr; cursor: grab; user-select: none; touch-action: pan-y; border: 1px solid rgba(198,154,68,0.25); }
+        /* ===== سلايدر الصور [تعديل]: استخدام Background لمنع الفراغات السوداء ===== */
+        .promo-slider-container { margin: 4px 0 20px; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); background: var(--bg-light); position: relative; direction: ltr; cursor: grab; user-select: none; touch-action: pan-y; border: 1px solid rgba(198,154,68,0.25); }
+        .promo-slider-container:active { cursor: grabbing; }
         .promo-track { display: flex; width: 100%; transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1); pointer-events: none; }
-        .promo-slide { min-width: 100%; height: 190px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background-color: var(--bg-light); background-size: cover; background-position: center; background-repeat: no-repeat; }
-        .promo-caption { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,4,8,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; direction: rtl; }
-        .promo-caption h3 { font-size: 1.2rem; font-weight: 900; color: var(--gold-light); margin-bottom: 4px; }
-        .promo-caption p { font-size: 0.85rem; font-weight: 600; color: #ffffff; }
-        .slider-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 5; direction: rtl; }
-        .slider-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); transition: all 0.3s; }
-        .slider-dots span.active { background: var(--primary); width: 20px; border-radius: 4px; }
+        .promo-slide { min-width: 100%; height: 205px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background-color: var(--bg-light); background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .promo-slide img { display: none; } /* إخفاء الصور القديمة */
 
-        /* ===== الأكثر طلباً (مطابق للصورة) ===== */
-        .popular-section { margin-bottom: 26px; position: relative; }
-        .section-header-title { font-size: 1.15rem; font-weight: 900; color: var(--primary); margin-bottom: 20px; text-align: right; padding-right: 4px; }
-        .popular-slider { display: flex; gap: 14px; overflow-x: auto; padding: 25px 4px 14px 4px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+        .promo-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,4,8,0.92) 10%, rgba(15,4,8,0.55) 60%, transparent); padding: 18px 18px 14px; color: white; text-align: right; direction: rtl; }
+        .promo-caption h3 { font-size: 1.05rem; font-weight: 900; color: var(--gold-light); margin-bottom: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .promo-caption p { font-size: 0.76rem; opacity: 0.95; font-weight: 600; color: #f3ece0; }
+        .slider-dots { position: absolute; bottom: 10px; right: 18px; display: flex; gap: 5px; z-index: 5; direction: rtl; pointer-events: none; }
+        .slider-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: all 0.3s; }
+        .slider-dots span.active { background: var(--gold-light); width: 22px; border-radius: 4px; }
+
+        /* ===== شريط الأصناف الأكثر طلباً [تعديل]: استخدام Background ===== */
+        .popular-section { margin-bottom: 22px; }
+        .section-header-title { font-size: 1rem; font-weight: 900; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+        .popular-slider { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 12px 2px; scrollbar-width: none; scroll-snap-type: x mandatory; }
         .popular-slider::-webkit-scrollbar { display: none; }
-        
-        .popular-card { 
-            min-width: 140px; max-width: 140px; background: var(--paper); border-radius: 16px; 
-            padding: 45px 12px 14px; text-align: center; border: 1px solid var(--line); 
-            box-shadow: var(--shadow-md); flex-shrink: 0; cursor: pointer; position: relative;
-            display: flex; flex-direction: column; justify-content: space-between; scroll-snap-align: start;
-            transition: transform var(--transition-fast);
-        }
-        .popular-card:active { transform: scale(0.97); }
-        
-        /* الصورة الدائرية البارزة */
-        .popular-card-img { 
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            width: 80px; height: 80px; border-radius: 50%; 
-            background-color: #fff; border: 3px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-            display: flex; align-items: center; justify-content: center; font-size: 2rem;
-        }
-        
-        .popular-card-title { font-size: 0.85rem; font-weight: 800; color: var(--primary); margin-bottom: 5px; margin-top: 5px; }
-        .popular-card-price { font-size: 0.8rem; color: var(--primary); font-weight: 800; margin-bottom: 12px; }
-        .popular-add-btn { 
-            background: var(--primary); color: white; border: none; border-radius: 8px; 
-            padding: 6px 0; font-size: 0.75rem; font-weight: 800; cursor: pointer; width: 100%; 
-            transition: background 0.2s;
-        }
-        .popular-add-btn:active { background: var(--primary-dark); }
+        .popular-card { min-width: 142px; max-width: 142px; background: var(--paper); border-radius: var(--radius-md); padding: 12px; text-align: center; border: 1px solid var(--line); box-shadow: var(--shadow); flex-shrink: 0; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; scroll-snap-align: start; transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+        .popular-card:active { transform: scale(0.96); box-shadow: var(--shadow-md); }
+        .popular-card-img { width: 100%; height: 88px; margin: 0 0 10px; border-radius: 14px; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 2rem; background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .popular-card-img img { display: none; }
 
-        /* ===== بطاقات الأقسام ===== */
+        .popular-card-title { font-size: 0.8rem; font-weight: 800; color: var(--dark); margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .popular-card-price { font-size: 0.74rem; color: var(--gold-deep); font-weight: 800; margin-bottom: 9px; background: rgba(198,154,68,0.12); display: inline-block; padding: 2px 10px; border-radius: 20px; }
+        .popular-add-btn { background: var(--gradient-primary); color: var(--gold-light); border: none; border-radius: 20px; padding: 7px 10px; font-size: 0.7rem; font-weight: 800; cursor: pointer; width: 100%; box-shadow: 0 4px 10px rgba(124,19,41,0.28); }
+        .popular-add-btn:active { transform: scale(0.95); }
+
+        /* ===== بطاقات الأقسام الرئيسية ===== */
         .categories-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 6px; }
-        .category-card { background: var(--paper); border-radius: var(--radius-md); padding: 18px 12px; text-align: center; cursor: pointer; transition: transform var(--transition-fast); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow); min-height: 120px; border: 1px solid var(--line); }
+        .category-card {
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md); padding: 20px 12px; text-align: center; cursor: pointer;
+            transition: transform var(--transition-fast); display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 8px; box-shadow: var(--shadow-md); min-height: 132px; position: relative;
+            border: 1px solid rgba(230,197,121,0.18); overflow: hidden;
+        }
+        .category-card::before {
+            content: ''; position: absolute; top: -30%; left: -30%; width: 70%; height: 70%;
+            background: radial-gradient(circle, rgba(230,197,121,0.18), transparent 70%);
+        }
         .category-card:active { transform: scale(0.96); }
-        .category-title { color: var(--primary); font-weight: 800; font-size: 0.9rem; }
-        .category-img { font-size: 2rem; line-height: 1; }
-        .order-btn { border: 1.5px solid var(--primary); background: transparent; border-radius: 30px; padding: 4px 16px; color: var(--primary); font-weight: 700; font-size: 0.65rem; cursor: pointer; transition: all 0.2s; }
-        .category-card:active .order-btn { background: var(--primary); color: white; }
+        .category-title { color: var(--gold-light); font-weight: 800; font-size: 0.95rem; text-shadow: 0 2px 4px rgba(0,0,0,0.25); position: relative; z-index: 1; }
+        .category-img { font-size: 2.1rem; line-height: 1; position: relative; z-index: 1; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.25)); }
+        .order-btn { border: 1.5px solid var(--gold-light); background: rgba(255,255,255,0.05); border-radius: 30px; padding: 4px 18px; color: var(--gold-light); font-weight: 700; font-size: 0.66rem; cursor: pointer; transition: all 0.2s; position: relative; z-index: 1; }
+        .order-btn:active { background: var(--gold-light); color: var(--primary-dark); }
 
-        /* ===== القوائم الداخلية ===== */
+        /* ===== واجهات الصفحات الداخلية ===== */
         .back-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--paper); padding: 9px 18px; border-radius: 30px; margin-bottom: 14px; cursor: pointer; font-size: 0.8rem; font-weight: 800; box-shadow: var(--shadow); border: 1px solid var(--line); color: var(--primary); }
+        .back-btn:active { transform: scale(0.96); }
         .page-heading { font-weight: 900; font-size: 1.02rem; color: var(--primary); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
         .menu-list { display: flex; flex-direction: column; gap: 10px; }
-        .menu-item-row { background: var(--paper); border-radius: var(--radius-md); border: 1px solid var(--line); display: flex; align-items: center; gap: 12px; padding: 12px; cursor: pointer; box-shadow: var(--shadow); transition: transform var(--transition-fast); }
-        .menu-item-row:active { transform: scale(0.98); }
-        .menu-item-icon { width: 58px; height: 58px; min-width: 58px; border-radius: 14px; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; overflow: hidden; border: 1px solid var(--line); background-size: cover; background-position: center; }
+        .menu-item-row { background: var(--paper); border-radius: var(--radius-md); border: 1px solid var(--line); display: flex; align-items: center; gap: 12px; padding: 12px; cursor: pointer; box-shadow: var(--shadow); transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
+        .menu-item-row:active { transform: scale(0.985); background: #fffaf1; }
+        
+        /* [تعديل]: استخدام Background لمنع الفراغات السوداء */
+        .menu-item-icon { width: 58px; height: 58px; min-width: 58px; border-radius: 14px; background-color: var(--bg-light); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; overflow: hidden; border: 1px solid var(--line); background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .menu-item-icon img { display: none; }
+
         .menu-item-info { flex: 1; text-align: right; min-width: 0; }
-        .menu-item-name { font-weight: 800; font-size: 0.87rem; color: var(--primary); line-height: 1.3; }
+        .menu-item-name { font-weight: 800; font-size: 0.87rem; color: var(--dark); line-height: 1.3; }
         .menu-item-desc { font-size: 0.68rem; color: var(--gray); line-height: 1.4; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-        .menu-item-price { color: var(--primary); font-weight: 800; font-size: 0.8rem; margin-top: 5px; }
-        .menu-item-add-btn { min-width: 38px; width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 1.25rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .menu-item-add-btn:active { transform: scale(0.9); }
+        .menu-item-price { color: var(--gold-deep); font-weight: 800; font-size: 0.8rem; margin-top: 5px; }
+        .menu-item-add-btn { min-width: 38px; width: 38px; height: 38px; border-radius: 50%; background: var(--gradient-primary); color: var(--gold-light); border: none; font-size: 1.25rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(124,19,41,0.3); }
+        .menu-item-add-btn:active { transform: scale(0.88); }
+        .empty-search-state { text-align: center; padding: 50px 20px; color: var(--gray); }
+        .empty-search-state i { font-size: 2.4rem; margin-bottom: 12px; color: var(--gold); opacity: 0.6; display: block; }
 
-        /* ===== شريط التنقل السفلي (مطابق للصورة) ===== */
+        /* ===== شريط التنقل السفلي ===== */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: var(--primary); display: flex; justify-content: space-around;
-            padding: 10px 0 14px; border-radius: 24px 24px 0 0; 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15); z-index: 100;
+            position: fixed; bottom: 10px; left: 10px; right: 10px;
+            background: var(--paper); display: flex; justify-content: space-around;
+            padding: 8px 4px; border-radius: 28px; box-shadow: var(--shadow-lg);
+            border: 1px solid var(--line); z-index: 100;
         }
-        .nav-item { text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; color: rgba(255,255,255,0.6); font-size: 0.65rem; font-weight: 600; padding: 4px 8px; min-width: 60px; position: relative; transition: color var(--transition-fast); }
-        .nav-item .nav-icon { font-size: 1.3rem; margin-bottom: 4px; transition: all var(--transition-fast); }
-        .nav-item.active { color: var(--gold-light); }
-        .nav-item.active .nav-icon { color: var(--gold-light); transform: translateY(-2px); }
-        .nav-badge { position: absolute; top: 0px; right: 10px; background: var(--gold); color: var(--primary); font-size: 0.55rem; padding: 2px 6px; border-radius: 50%; font-weight: 800; }
+        .nav-item { text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; color: var(--gray); font-size: 0.6rem; font-weight: 600; padding: 4px 8px; min-width: 48px; position: relative; transition: color var(--transition-fast); }
+        .nav-item .nav-icon { font-size: 1.15rem; margin-bottom: 3px; color: var(--gray); transition: all var(--transition-fast); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-left: auto; margin-right: auto; }
+        .nav-item.active .nav-icon { color: var(--gold-light); background: var(--gradient-primary); box-shadow: 0 4px 10px rgba(124,19,41,0.35); }
+        .nav-item.active { color: var(--primary); font-weight: 800; }
+        .nav-badge { position: absolute; top: -2px; right: 2px; background: var(--danger); color: white; font-size: 0.5rem; padding: 2px 6px; border-radius: 50%; border: 2px solid var(--paper); }
 
-        /* ===== السلة والنوافذ ===== */
-        .float-cart { position: fixed; bottom: 85px; left: 16px; right: 16px; background: var(--primary); color: white; padding: 14px 22px; border-radius: 50px; display: none; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 10px 24px -6px rgba(124,19,41,0.4); font-weight: 800; font-size: 0.87rem; cursor: pointer; }
+        /* ===== السلة العائمة و الجانبية ===== */
+        .float-cart { position: fixed; bottom: 92px; left: 16px; right: 16px; background: var(--gradient-primary); color: white; padding: 14px 22px; border-radius: 50px; display: none; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 10px 24px -6px rgba(124,19,41,0.5); border: 1px solid rgba(230,197,121,0.4); font-weight: 800; font-size: 0.87rem; cursor: pointer; }
+        .float-cart:active { transform: scale(0.98); }
         .cart-sidebar { position: fixed; top: 0; left: -100%; width: 87%; max-width: 390px; height: 100%; background: var(--bg-light); z-index: 10001; transition: left 0.35s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
         .cart-sidebar.open { left: 0; }
-        .cart-header { padding: 20px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1.02rem; }
+        .cart-header { padding: 20px; background: var(--gradient-primary); color: white; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1.02rem; border-bottom: 2px solid var(--gold); }
         .cart-close { cursor: pointer; font-size: 1.2rem; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; }
         .cart-items { flex: 1; overflow-y: auto; padding: 16px; }
-        .cart-item { display: flex; gap: 12px; padding: 12px; background: var(--paper); border-radius: var(--radius-md); margin-bottom: 12px; align-items: center; border: 1px solid var(--line); }
-        .cart-item-img { width: 54px; height: 54px; border-radius: 12px; background-color: var(--bg-light); overflow: hidden; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; }
-        .cart-item-details { flex: 1; }
-        .cart-item-details h4 { font-size: 0.85rem; font-weight: 800; color: var(--primary); }
-        .cart-item-details div { font-size: 0.75rem; color: var(--primary); font-weight: 700; margin-top: 3px; }
-        .cart-qty-controls { display: flex; align-items: center; gap: 8px; background: var(--bg-light); padding: 4px 8px; border-radius: 20px; }
-        .qty-btn-small { width: 26px; height: 26px; border-radius: 50%; background: var(--primary); border: none; color: white; font-weight: bold; cursor: pointer; }
-        .cart-footer { padding: 16px; border-top: 1px solid var(--line); background: var(--paper); }
-        .cart-total { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 12px; font-size: 0.98rem; color: var(--primary); }
-        .checkout-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 40px; font-weight: 900; cursor: pointer; font-size: 0.92rem; }
+        .cart-item { display: flex; gap: 12px; padding: 12px; background: var(--paper); border-radius: var(--radius-md); margin-bottom: 12px; align-items: center; border: 1px solid var(--line); box-shadow: var(--shadow); }
+        
+        /* [تعديل]: استخدام Background لمنع الفراغات السوداء */
+        .cart-item-img { width: 54px; height: 54px; border-radius: 12px; background-color: var(--bg-light); overflow: hidden; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .cart-item-img img { display: none; }
 
-        /* ===== النوافذ المنبثقة ===== */
-        .item-modal-overlay { position: fixed; inset: 0; background: rgba(20,6,10,0.5); backdrop-filter: blur(4px); z-index: 20000; display: none; align-items: flex-end; justify-content: center; }
-        .item-modal-card { background: var(--paper); border-radius: 28px 28px 0 0; width: 100%; max-width: 460px; overflow: hidden; animation: sheetUp 0.28s ease-out; max-height: 92vh; overflow-y: auto; }
+        .cart-item-details { flex: 1; }
+        .cart-item-details h4 { font-size: 0.85rem; font-weight: 800; color: var(--dark); }
+        .cart-item-details div { font-size: 0.75rem; color: var(--gold-deep); font-weight: 700; margin-top: 3px; }
+        .cart-qty-controls { display: flex; align-items: center; gap: 8px; background: var(--bg-light); padding: 4px 8px; border-radius: 20px; }
+        .qty-btn-small { width: 26px; height: 26px; border-radius: 50%; background: var(--gradient-primary); border: none; color: white; font-weight: bold; cursor: pointer; }
+        .cart-footer { padding: 16px; border-top: 1px solid var(--line); background: var(--paper); }
+        .cart-total { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 12px; font-size: 0.98rem; color: var(--dark); }
+        .checkout-btn { width: 100%; padding: 15px; background: var(--gradient-gold); color: var(--primary-deep); border: none; border-radius: 40px; font-weight: 900; cursor: pointer; font-size: 0.92rem; box-shadow: 0 8px 18px -4px rgba(198,154,68,0.45); transition: transform var(--transition-fast); }
+        .checkout-btn:active { transform: scale(0.97); }
+
+        /* ===== النافذة المنبثقة للصنف (شيت سفلي) ===== */
+        .item-modal-overlay { position: fixed; inset: 0; background: rgba(20,6,10,0.55); backdrop-filter: blur(6px); z-index: 20000; display: none; align-items: flex-end; justify-content: center; }
+        .item-modal-card { background: var(--paper); border-radius: 28px 28px 0 0; width: 100%; max-width: 460px; overflow: hidden; animation: sheetUp 0.28s cubic-bezier(0.25,0.9,0.4,1); box-shadow: 0 -20px 50px rgba(0,0,0,0.25); max-height: 92vh; overflow-y: auto; }
         @keyframes sheetUp { from { transform: translateY(50px); opacity: 0.3; } to { transform: translateY(0); opacity: 1; } }
-        .modal-img { width: 100%; height: 230px; overflow: hidden; position: relative; background-color: var(--bg-light); background-size: cover; background-position: center; }
+        @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        /* [تعديل]: استخدام Background لمنع الفراغات السوداء */
+        .modal-img { width: 100%; height: 230px; overflow: hidden; position: relative; background-color: var(--bg-light); background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .modal-img img { display: none; }
+
         .modal-content { padding: 22px; }
-        .modal-content h3 { font-size: 1.25rem; margin-bottom: 6px; color: var(--primary); font-weight: 900; }
+        .modal-content h3 { font-size: 1.25rem; margin-bottom: 6px; color: var(--dark); font-weight: 900; }
         .modal-desc { font-size: 0.82rem; color: var(--gray); margin-bottom: 14px; line-height: 1.5; }
         .modal-price { font-size: 1.35rem; font-weight: 900; color: var(--primary); margin-bottom: 16px; }
         .modal-quantity { display: flex; align-items: center; justify-content: center; gap: 22px; margin-bottom: 18px; background: var(--bg-light); padding: 8px; border-radius: 40px; }
-        .modal-quantity button { width: 46px; height: 46px; border-radius: 50%; background: var(--primary); color: white; border: none; font-size: 1.25rem; font-weight: 800; cursor: pointer; }
+        .modal-quantity button { width: 46px; height: 46px; border-radius: 50%; background: var(--gradient-primary); color: white; border: none; font-size: 1.25rem; font-weight: 800; cursor: pointer; }
+        .modal-quantity button:active { transform: scale(0.9); }
+        .modal-quantity span { font-weight: 800; font-size: 1.05rem; min-width: 20px; text-align: center; }
         .modal-note textarea { width: 100%; padding: 12px; border-radius: 16px; border: 1.5px solid var(--line); font-size: 0.8rem; resize: vertical; outline: none; font-family: inherit; background: var(--bg-light); }
+        .modal-note textarea:focus { border-color: var(--gold); }
         .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
         .modal-actions button { flex: 1; padding: 15px; border-radius: 40px; font-weight: 800; border: none; cursor: pointer; font-size: 0.9rem; }
-        .btn-add-modal { background: var(--primary); color: white; }
-        .btn-close-modal { background: var(--gray-light); color: var(--primary); }
+        .btn-add-modal { background: var(--gradient-gold); color: var(--primary-deep); box-shadow: 0 8px 18px -4px rgba(198,154,68,0.4); }
+        .btn-add-modal:active, .modal-actions button:active { transform: scale(0.97); }
+        .btn-close-modal { background: var(--gray-light); color: var(--dark); }
 
-        .toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: var(--primary); color: white; padding: 15px; border-radius: 30px; text-align: center; z-index: 9999; display: none; font-size: 0.85rem; font-weight: 700; }
+        .toast { position: fixed; bottom: 100px; left: 20px; right: 20px; background: var(--primary-deep); color: white; padding: 15px; border-radius: 30px; text-align: center; z-index: 9999; display: none; font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 24px rgba(0,0,0,0.3); border: 1px solid rgba(230,197,121,0.3); }
         .toast.show { display: block; animation: slideUp 0.3s forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ===== شاشة الدخول ===== */
-        #loginOverlay { position: fixed; inset: 0; z-index: 100000; display: none; align-items: center; justify-content: center; background: var(--primary-dark); padding: 20px; }
-        .login-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 34px; padding: 38px 26px; width: 100%; max-width: 380px; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .login-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 4px; color: var(--gold); }
-        .login-subtitle { color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-bottom: 24px; }
-        .role-buttons { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 40px; }
-        .role-btn { flex: 1; padding: 12px 8px; border-radius: 40px; font-weight: 800; cursor: pointer; font-size: 0.85rem; color: rgba(255,255,255,0.6); }
-        .role-btn.active { background: var(--white); color: var(--primary); }
+        #loginOverlay {
+            position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center;
+            background: var(--gradient-dark);
+            padding: 20px;
+        }
+        #loginOverlay::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.14;
+            background-image: repeating-linear-gradient(45deg, rgba(230,197,121,0.5) 0 1.5px, transparent 1.5px 26px), repeating-linear-gradient(-45deg, rgba(230,197,121,0.5) 0 1.5px, transparent 1.5px 26px);
+        }
+        .login-card {
+            position: relative; z-index: 1;
+            background: rgba(255,255,255,0.07); backdrop-filter: blur(24px);
+            border-radius: 34px; padding: 38px 26px; width: 100%; max-width: 380px;
+            box-shadow: var(--shadow-lg); border: 1px solid rgba(255,255,255,0.14);
+            text-align: center; color: white;
+        }
+        .login-logo-mark { width: 78px; height: 78px; margin: 0 auto 16px; filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4)); }
+        .login-title { font-size: 1.35rem; font-weight: 900; margin-bottom: 4px; background: var(--gradient-gold); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .login-subtitle { color: rgba(255,255,255,0.68); font-size: 0.78rem; margin-bottom: 24px; line-height: 1.5; }
+        .role-buttons { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.06); padding: 5px; border-radius: 40px; }
+        .role-btn { flex: 1; padding: 12px 8px; border-radius: 40px; font-weight: 800; cursor: pointer; font-size: 0.85rem; transition: all 0.3s; background: transparent; color: rgba(255,255,255,0.65); }
+        .role-btn.active { background: var(--white); color: var(--primary); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
         .field-input-wrap { position: relative; margin-bottom: 12px; }
-        .field-input-wrap i { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: rgba(255,255,255,0.4); }
-        .field-input { width: 100%; padding: 15px 46px 15px 20px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.08); color: white; font-size: 0.85rem; outline: none; }
-        #loginBtn { width: 100%; margin-top: 22px; padding: 16px; border-radius: 40px; border: none; background: var(--gold); color: var(--primary-dark); font-weight: 900; font-size: 1rem; cursor: pointer; }
+        .field-input-wrap i { position: absolute; top: 50%; right: 20px; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 0.9rem; pointer-events: none; }
+        .field-input { width: 100%; padding: 15px 46px 15px 20px; border-radius: 40px; border: 1.5px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.08); color: white; font-size: 0.85rem; outline: none; font-family: inherit; transition: border-color var(--transition-fast); }
+        .field-input:focus { border-color: var(--gold); }
+        .field-input::placeholder { color: rgba(255,255,255,0.45); }
+        #loginBtn { width: 100%; margin-top: 22px; padding: 16px; border-radius: 40px; border: none; background: var(--gradient-gold); color: var(--primary-deep); font-weight: 900; font-size: 1rem; cursor: pointer; box-shadow: 0 10px 22px -4px rgba(198,154,68,0.5); }
+        #loginBtn:active { transform: scale(0.97); }
+        #loginBtn:disabled { opacity: 0.7; }
 
-        /* ===== الخريطة وتتبع الطلب ===== */
+        /* ===== واجهة المندوب ===== */
+        .driver-header-new {
+            background: var(--gradient-dark); color: white; padding: 22px; border-radius: var(--radius-lg);
+            margin-bottom: 20px; text-align: center; border-bottom: 3px solid var(--gold);
+            box-shadow: var(--shadow-md); position: relative; overflow: hidden;
+        }
+        .driver-header-new::before { content:''; position:absolute; top:-40%; right:-20%; width:180px; height:180px; background: radial-gradient(circle, rgba(230,197,121,0.2), transparent 70%); }
+        .driver-header-new h2 { font-size: 1.4rem; font-weight: 900; position: relative; }
+        .driver-header-new p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; position: relative; }
+        .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .stat-card-new { background: var(--paper); border-radius: var(--radius-md); padding: 14px; text-align: center; flex: 1; border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .stat-value { font-size: 1.4rem; font-weight: 900; color: var(--primary); }
+        .stat-label { font-size: 0.66rem; color: var(--gray); margin-top: 4px; font-weight: 600; }
+        .driver-tabs { display: flex; gap: 8px; margin-bottom: 20px; background: var(--paper); padding: 8px; border-radius: 50px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .driver-tab { flex: 1; padding: 9px; border-radius: 40px; text-align: center; font-weight: 800; font-size: 0.76rem; cursor: pointer; transition: 0.2s; background: transparent; color: var(--gray); }
+        .driver-tab.active { background: var(--gradient-primary); color: white; box-shadow: 0 4px 10px rgba(124,19,41,0.3); }
+        .driver-orders-container { background: transparent; border-radius: var(--radius-lg); padding: 0; min-height: 200px; }
+        .driver-order-card { background: var(--paper); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px; border: 1px solid var(--line); border-right: 5px solid var(--primary); box-shadow: var(--shadow); cursor: pointer; transition: transform 0.1s; }
+        .driver-order-card:active { transform: scale(0.98); }
+        .driver-order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .driver-order-id { font-weight: 900; color: var(--primary); font-size: 0.87rem; }
+        .driver-order-status { background: var(--primary); color: white; padding: 3px 12px; border-radius: 20px; font-size: 0.62rem; font-weight: 800; white-space: nowrap; }
+        .driver-order-details { font-size: 0.76rem; color: var(--gray); line-height: 1.7; }
+        .driver-order-details i { width: 18px; color: var(--gold-deep); }
+        .driver-order-actions { display: flex; gap: 5px; margin-top: 10px; flex-wrap: wrap; }
+        .driver-action-btn { flex: 1; padding: 11px 0; border-radius: 30px; font-size: 0.72rem; font-weight: 800; border: none; cursor: pointer; margin: 3px; min-width: 60px; transition: 0.1s; }
+        .driver-action-btn:active { transform: scale(0.95); }
+        .driver-action-btn.primary { background: var(--gradient-primary); color: white; }
+        .driver-action-btn.warning { background: var(--warning); color: white; }
+        .driver-action-btn.success { background: var(--success); color: white; }
+        .driver-action-btn.danger { background: var(--danger); color: white; }
+        .driver-action-btn.call { background: #25D366; color: white; }
+        .driver-action-btn.info { background: var(--info); color: white; }
+        .driver-action-btn.purple { background: var(--purple); color: white; }
+        .empty-orders { text-align: center; padding: 40px 20px; color: var(--gray); background: var(--paper); border-radius: var(--radius-lg); border: 1px dashed var(--line); }
+        .empty-orders i { font-size: 2.6rem; margin-bottom: 12px; opacity: 0.5; color: var(--gold); }
+        .sync-indicator { font-size: 0.65rem; color: var(--gray); display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-weight: 600; }
+
+        /* ===== تفاصيل الطلب للمندوب ===== */
+        .order-detail-card { background: var(--paper); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 20px; border: 1px solid var(--line); box-shadow: var(--shadow-md); }
+        .order-detail-header { border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 16px; }
+        .order-detail-header h3 { font-size: 1.1rem; color: var(--primary); font-weight: 900; }
+        .order-detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+        .order-detail-label { font-weight: 700; color: var(--dark); }
+        .order-detail-value { color: var(--gray); text-align: left; max-width: 60%; font-weight: 600; }
+        .items-table { width: 100%; margin: 12px 0; border-collapse: collapse; font-size: 0.8rem; }
+        .items-table th { background: var(--bg-light); font-weight: 800; color: var(--primary); padding: 9px; text-align: center; border-bottom: 2px solid var(--line); }
+        .items-table td { padding: 9px; text-align: center; border-bottom: 1px solid var(--line); }
+        .items-table td:first-child { text-align: right; }
+        .order-status-buttons { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; justify-content: center; }
+        .order-status-buttons .driver-action-btn { flex: 0 1 auto; padding: 9px 18px; }
+        .btn-primary { background: var(--gradient-primary); color: white; border: none; padding: 13px; border-radius: 40px; width: 100%; font-weight: 800; cursor: pointer; font-size: 0.9rem; transition: 0.1s; box-shadow: var(--shadow); }
+        .btn-primary:active { transform: scale(0.97); }
+
+        /* ===== نافذة التأكيد ===== */
+        #confirmationModal { position: fixed; inset: 0; background: rgba(20,6,10,0.55); backdrop-filter: blur(5px); z-index: 40000; display: none; align-items: center; justify-content: center; }
+        .confirmation-card { background: var(--paper); border-radius: var(--radius-xl); padding: 30px; width: 87%; max-width: 320px; text-align: center; box-shadow: var(--shadow-lg); }
+        .confirmation-card h4 { font-size: 1.12rem; margin-bottom: 8px; color: var(--primary); font-weight: 900; }
+        .confirmation-card p { font-size: 0.9rem; color: var(--gray); margin-bottom: 20px; }
+        .confirmation-actions { display: flex; gap: 12px; justify-content: center; }
+        .confirmation-actions button { padding: 10px 26px; border-radius: 30px; border: none; font-weight: 800; cursor: pointer; font-size: 0.85rem; }
+        .confirmation-actions .btn-confirm, #modalConfirm { background: var(--gradient-gold); color: var(--primary-deep); }
+        .confirmation-actions .btn-cancel, #modalCancel { background: var(--gray-light); color: var(--dark); }
+
+        /* ===== الخريطة ===== */
         #map-overlay { position: fixed; inset: 0; background: #000; z-index: 100000; display: none; flex-direction: column; }
         #map { flex: 1; width: 100%; height: 100%; }
         .map-controls { display: flex; background: var(--primary-dark); padding: 16px; gap: 10px; }
         .map-confirm, .map-back { flex: 1; color: white; padding: 15px; text-align: center; font-weight: 800; cursor: pointer; border-radius: 40px; }
-        .map-confirm { background: var(--gold); color: var(--primary-dark); }
+        .map-confirm { background: var(--gradient-gold); color: var(--primary-deep); }
         .map-back { background: rgba(255,255,255,0.15); }
-        
-        #trackFullscreen { position: fixed; inset: 0; background: var(--bg-light); z-index: 15000; overflow-y: auto; display: none; }
-        .tracking-header { background: var(--primary); color: white; padding: 26px 18px; text-align: center; border-radius: 0 0 28px 28px; }
-        .tracking-step-item { display: flex; align-items: flex-start; gap: 14px; position: relative; padding-bottom: 24px; }
-        .tracking-step-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--paper); border: 2.5px solid var(--line); color: #bbb; }
-        .tracking-step-item.completed .tracking-step-circle { background: var(--success); border-color: var(--success); color: white; }
-        .tracking-step-item.active .tracking-step-circle { background: var(--primary); border-color: var(--primary); color: white; }
 
-        /* ===== إخفاء العناصر غير المستخدمة ===== */
-        .trust-badge, .hero-badges-row, .brand-tagline { display: none; }
+        /* ===== تتبع الطلب ===== */
+        #trackFullscreen { position: fixed; inset: 0; background: var(--bg-light); z-index: 15000; overflow-y: auto; display: none; }
+        .tracking-header { background: var(--gradient-dark); color: white; padding: 26px 18px; text-align: center; border-radius: 0 0 28px 28px; }
+        .tracking-header h2 { font-size: 1.25rem; font-weight: 900; margin-bottom: 4px; }
+        .tracking-header .order-id { font-size: 0.85rem; opacity: 0.8; font-weight: 600; }
+        .tracking-status-badge { display: inline-block; background: rgba(255,255,255,0.14); border: 1px solid rgba(230,197,121,0.35); padding: 7px 18px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; margin-top: 10px; color: var(--gold-light); }
+        .tracking-steps-vertical { display: flex; flex-direction: column; gap: 0; margin: 20px 16px; }
+        .tracking-step-item { display: flex; align-items: flex-start; gap: 14px; position: relative; padding-bottom: 24px; }
+        .tracking-step-item:last-child { padding-bottom: 0; }
+        .tracking-step-indicator { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .tracking-step-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; background: var(--paper); border: 2.5px solid var(--line); color: #bbb; transition: all 0.3s; z-index: 2; }
+        .tracking-step-item.completed .tracking-step-circle { background: var(--success); border-color: var(--success); color: white; }
+        .tracking-step-item.active .tracking-step-circle { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 0 20px rgba(124,19,41,0.4); animation: pulseCircle 1.5s infinite; }
+        .tracking-step-item.preparing .tracking-step-circle { background: var(--warning); border-color: var(--warning); color: white; animation: pulseCircle 1.5s infinite; }
+        @keyframes pulseCircle { 0% { box-shadow: 0 0 0 0 rgba(124,19,41,0.4); } 100% { box-shadow: 0 0 0 15px rgba(124,19,41,0); } }
+        .tracking-step-line { width: 3px; flex: 1; background: var(--line); margin-top: 4px; min-height: 24px; transition: background 0.3s; }
+        .tracking-step-item.completed .tracking-step-line { background: var(--success); }
+        .tracking-step-item.active .tracking-step-line { background: linear-gradient(to bottom, var(--primary), var(--line)); }
+        .tracking-step-content { flex: 1; padding-top: 7px; }
+        .tracking-step-title { font-size: 0.86rem; font-weight: 800; color: var(--gray); margin-bottom: 2px; }
+        .tracking-step-item.completed .tracking-step-title { color: var(--success); }
+        .tracking-step-item.active .tracking-step-title { color: var(--primary); }
+        .tracking-step-item.preparing .tracking-step-title { color: var(--warning); }
+        .tracking-step-desc { font-size: 0.7rem; color: #a89e94; }
+        .tracking-card { background: var(--paper); border-radius: var(--radius-lg); padding: 18px; margin: 0 16px 16px; box-shadow: var(--shadow-md); border: 1px solid var(--line); }
+        .tracking-card-title { font-size: 0.86rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .tracking-info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size: 0.8rem; }
+        .tracking-info-row:last-child { border-bottom: none; }
+        .tracking-info-label { color: var(--gray); font-weight: 600; }
+        .tracking-info-value { font-weight: 800; color: var(--dark); text-align: left; max-width: 60%; }
+        .tracking-driver-info { display: flex; align-items: center; gap: 12px; background: var(--bg-light); border-radius: var(--radius-md); padding: 12px; }
+        .tracking-driver-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; flex-shrink: 0; }
+        .tracking-driver-details { flex: 1; }
+        .tracking-driver-name { font-weight: 800; font-size: 0.9rem; color: var(--dark); }
+        .tracking-driver-status { font-size: 0.7rem; color: var(--gray); }
+        .tracking-call-btn { width: 42px; height: 42px; border-radius: 50%; background: #25D366; color: white; border: none; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .tracking-items-list { max-height: 200px; overflow-y: auto; margin-top: 8px; }
+        .tracking-item { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.78rem; }
+        .tracking-item:last-child { border-bottom: none; }
+        .tracking-total-row { display: flex; justify-content: space-between; padding: 12px 0; font-weight: 900; font-size: 0.92rem; border-top: 2px solid var(--primary); margin-top: 8px; color: var(--primary); }
+        .tracking-close-btn { width: calc(100% - 32px); margin: 0 16px 24px; padding: 15px; background: var(--gradient-primary); color: white; border: none; border-radius: 40px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 8px 18px -4px rgba(124,19,41,0.4); }
+        .tracking-close-btn:active { transform: scale(0.97); }
+
+        /* ===== نافذة التقييم ===== */
+        .rating-stars-wrapper { display: flex; gap: 6px; font-size: 1.85rem; cursor: pointer; }
+        .rating-stars-wrapper .fa-star { color: var(--gray-light); transition: color 0.2s; }
+        .rating-stars-wrapper .fa-star.active { color: var(--gold); }
+
+        #trackOrderBtnHome { display: none; background: var(--gradient-gold); color: var(--primary-deep); border: none; padding: 13px; border-radius: 40px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 12px; box-shadow: 0 8px 18px -4px rgba(198,154,68,0.4); }
+        #trackOrderBtnHome:active { transform: scale(0.97); }
+
+        /* ===== صفحة الدفع ===== */
+        .checkout-card { background: var(--paper); border-radius: var(--radius-lg); padding: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .checkout-item-row { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 10px 0; align-items: flex-start; }
+        .checkout-item-row:last-of-type { border-bottom: none; }
+        .checkout-item-note { font-size: 0.7rem; color: var(--gray); margin-top: 3px; }
+        .checkout-totals { border-top: 2px solid var(--primary); margin-top: 12px; padding-top: 12px; }
+        .checkout-totals .row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .checkout-totals .grand { font-size: 1.2rem; font-weight: 900; color: var(--primary); margin-top: 6px; }
+        .field-label { font-weight: 800; font-size: 0.82rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--dark); }
+        .btn-location { background: var(--gradient-primary); color: white; padding: 12px; font-size: 0.82rem; border-radius: 40px; border: none; width: 100%; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow); }
+        .map-picker-row { background: var(--paper); border: 1.5px solid var(--line); border-radius: 30px; padding: 13px 18px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .manual-address-input { background: var(--paper); border: 1.5px solid var(--line); border-radius: 30px; padding: 13px 18px; width: 100%; margin: 8px 0; color: var(--dark); outline: none; font-family: inherit; font-size: 0.85rem; }
+        .manual-address-input:focus { border-color: var(--gold); }
+        .delivery-cost-card { background: var(--gradient-primary); border-radius: var(--radius-md); padding: 13px 16px; margin: 12px 0; color: white; font-weight: 800; font-size: 0.86rem; display: flex; justify-content: space-between; box-shadow: var(--shadow); }
+
+        /* ===== وسائل الدفع ===== */
+        .payment-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .payment-option { background: var(--paper); border: 1.5px solid var(--line); border-radius: var(--radius-md); padding: 14px 6px; text-align: center; cursor: pointer; transition: all var(--transition-fast); }
+        .payment-option:active { transform: scale(0.96); }
+        .payment-option.active { border-color: var(--gold); background: linear-gradient(145deg, rgba(198,154,68,0.1), rgba(124,19,41,0.05)); box-shadow: var(--shadow); }
+        .payment-icon { width: 40px; height: 40px; margin: 0 auto 8px; border-radius: 50%; background: var(--bg-light); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.05rem; }
+        .payment-option.active .payment-icon { background: var(--gradient-gold); color: var(--primary-deep); }
+        .payment-name { font-size: 0.66rem; font-weight: 800; color: var(--dark); }
+        .payment-details-box { background: var(--bg-light); padding: 12px 16px; border-radius: 25px; display: flex; justify-content: space-between; align-items: center; direction: ltr; font-family: monospace; font-weight: 700; border: 1.5px dashed var(--gold); }
+        .payment-copy-btn { background: var(--gradient-primary); color: white; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; font-weight: 700; }
+
+        /* ===== صفحة الإعدادات/طلباتي ===== */
+        .surface-card { background: var(--paper); border-radius: var(--radius-lg); padding: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--line); cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--dark); }
+        .settings-row:last-of-type { border-bottom: none; }
+        .settings-row i:first-child { color: var(--primary); margin-left: 8px; width: 18px; }
+        .settings-row .chevron { color: var(--gray); }
+        .btn-danger-block { width: 100%; padding: 14px; background: var(--danger); color: white; border: none; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 16px; box-shadow: var(--shadow); }
+        .btn-danger-block:active { transform: scale(0.97); }
+        .my-order-card { background: var(--paper); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); margin-bottom: 12px; cursor: pointer; box-shadow: var(--shadow); transition: transform var(--transition-fast); }
+        .my-order-card:active { transform: scale(0.98); }
+        .my-order-top { display: flex; justify-content: space-between; align-items: center; }
+        .my-order-id { font-weight: 900; color: var(--primary); }
+        .my-order-status { color: white; padding: 3px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; }
+        .my-order-meta { margin-top: 8px; font-size: 0.85rem; color: var(--gray); font-weight: 600; }
+        .empty-state-block { text-align: center; padding: 40px 20px; color: var(--gray); }
+        .empty-state-block i { font-size: 2.4rem; color: var(--gold); opacity: 0.6; margin-bottom: 10px; display: block; }
+
+        /* ===== لوحة الإدارة ===== */
+        .admin-shell { background: var(--paper); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+        .admin-heading { color: var(--primary); margin: 10px 0 14px; font-size: 1.05rem; font-weight: 900; }
+        .admin-tabs { display: flex; gap: 5px; border-bottom: 2px solid var(--line); overflow-x: auto; margin-bottom: 16px; scrollbar-width: none; }
+        .admin-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { padding: 9px 14px; background: transparent; border: none; font-weight: 800; color: var(--gray); font-size: 0.8rem; cursor: pointer; white-space: nowrap; border-radius: 12px 12px 0 0; transition: all var(--transition-fast); }
+        .tab-btn.active { color: var(--primary); background: var(--bg-light); box-shadow: inset 0 -3px 0 var(--gold); }
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; animation: fadeIn 0.25s ease; }
+        .admin-section { margin-bottom: 18px; }
+        .admin-section h4 { font-weight: 800; color: var(--dark); margin-bottom: 10px; font-size: 0.92rem; }
+        .admin-section .field-input.light,
+        .admin-input-light {
+            width: 100%; padding: 13px 18px; border-radius: 30px; font-family: inherit;
+            color: var(--dark); background: var(--bg-light); border: 1.5px solid var(--line); margin-bottom: 10px; font-size: 0.85rem; outline: none;
+        }
+        .admin-map-picker { background: var(--bg-light); padding: 12px; border-radius: 30px; text-align: center; margin-bottom: 10px; cursor: pointer; border: 1.5px dashed var(--gold); font-weight: 700; color: var(--primary); }
+        .admin-list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 14px; background: var(--bg-light); margin-bottom: 8px; }
+        .admin-list-row button { background: var(--danger); color: white; border: none; padding: 6px 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.75rem; }
+        .admin-setting-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; font-weight: 700; font-size: 0.85rem; }
+
+        /* ===== الوضع الليلي ===== */
+        body.dark-mode { background: #17100e; color: #ece4d8; }
+        body.dark-mode .search-container, body.dark-mode .popular-card, body.dark-mode .menu-item-row,
+        body.dark-mode .cart-sidebar, body.dark-mode .cart-footer, body.dark-mode .driver-orders-container,
+        body.dark-mode .driver-order-card, body.dark-mode .order-detail-card, body.dark-mode .stat-card-new,
+        body.dark-mode .driver-tabs, body.dark-mode .tracking-card, body.dark-mode .surface-card,
+        body.dark-mode .checkout-card, body.dark-mode .my-order-card, body.dark-mode .admin-shell,
+        body.dark-mode .payment-option, body.dark-mode .manual-address-input, body.dark-mode .map-picker-row,
+        body.dark-mode .bottom-nav {
+            background: #271a17; border-color: #3d2a24;
+        }
+        body.dark-mode .cart-item, body.dark-mode .menu-item-icon, body.dark-mode .popular-card-img,
+        body.dark-mode .tracking-driver-info, body.dark-mode .payment-icon, body.dark-mode .admin-input-light,
+        body.dark-mode .admin-list-row {
+            background: #3d2a24;
+        }
+        body.dark-mode .section-header-title, body.dark-mode .menu-item-name, body.dark-mode .popular-card-title,
+        body.dark-mode .cart-item-details h4, body.dark-mode .tracking-info-value, body.dark-mode .tracking-driver-name,
+        body.dark-mode .settings-row, body.dark-mode .my-order-id, body.dark-mode .admin-heading,
+        body.dark-mode .payment-name {
+            color: #f1e9dc;
+        }
+        body.dark-mode .menu-item-desc, body.dark-mode .stat-label, body.dark-mode .driver-order-details,
+        body.dark-mode .order-detail-value, body.dark-mode .tracking-info-label, body.dark-mode .tracking-driver-status,
+        body.dark-mode .my-order-meta {
+            color: #b8a999;
+        }
+        body.dark-mode #trackFullscreen { background: #17100e; }
+        body.dark-mode .tracking-header { background: linear-gradient(135deg, #3d2a24, #271a17); }
+        body.dark-mode .manual-address-input, body.dark-mode .field-input.light { color: #f1e9dc; }
+
     </style>
 </head>
 <body>
 
-    <!-- ===== شاشة التحميل ===== -->
+    <!-- ===== شاشة التحميل العامة ===== -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner-container">
             <div class="loading-spinner-ring"></div>
@@ -277,71 +573,80 @@
         <div class="loading-subtext" id="loadingSubtext">يرجى الانتظار قليلاً</div>
     </div>
 
-    <!-- ===== الهيدر والشعار (مطابق للصورة) ===== -->
+    <!-- ===== الهيدر / الهيرو ===== -->
     <div class="hero-wrap">
+        <div class="hero-topbar">
+            <div class="hero-badge"><i class="fas fa-motorcycle"></i> توصيل سريع</div>
+            <div class="hero-badge"><i class="fas fa-map-marker-alt"></i> 22 مايو</div>
+        </div>
         <div class="hero-brand">
-            <!-- شعار الأندلس (تصميم SVG مطابق) -->
-            <svg class="brand-logo-svg" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg">
+            <svg class="brand-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="شعار مطاعم وبروست الاندلس">
                 <defs>
                     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stop-color="#e6c579"/>
                         <stop offset="100%" stop-color="#93701f"/>
                     </linearGradient>
+                    <linearGradient id="plateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#a3213c"/>
+                        <stop offset="100%" stop-color="#4a0c1a"/>
+                    </linearGradient>
                 </defs>
-                <!-- النص العلوي: مطاعم وبروست -->
-                <text x="150" y="30" text-anchor="middle" font-family="Cairo, sans-serif" font-weight="900" font-size="20" fill="#7c1329">مطاعم</text>
-                <text x="150" y="55" text-anchor="middle" font-family="Cairo, sans-serif" font-weight="900" font-size="20" fill="#7c1329">وبروست</text>
-                
-                <!-- التاج الذهبي فوق الأندلس -->
-                <path d="M 80 75 Q 150 45 220 75" stroke="url(#goldGrad)" stroke-width="4" fill="none" stroke-linecap="round"/>
-                <path d="M 80 75 Q 150 85 220 75" stroke="url(#goldGrad)" stroke-width="2" fill="none" stroke-linecap="round"/>
-                <circle cx="150" cy="55" r="4" fill="url(#goldGrad)"/>
-                
-                <!-- كلمة الأندلس بخط عريض -->
-                <text x="150" y="130" text-anchor="middle" font-family="Cairo, sans-serif" font-weight="900" font-size="55" fill="#7c1329">الأندلس</text>
-                
-                <!-- أيقونة الطبق والسكين على اليسار -->
-                <g transform="translate(40, 100)">
-                    <circle cx="0" cy="0" r="12" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
-                    <line x1="-18" y1="-12" x2="-18" y2="12" stroke="url(#goldGrad)" stroke-width="2"/>
-                    <line x1="-22" y1="-12" x2="-22" y2="12" stroke="url(#goldGrad)" stroke-width="2"/>
-                </g>
+                <circle cx="50" cy="50" r="47" fill="url(#plateGrad)" stroke="url(#goldGrad)" stroke-width="2.5"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="url(#goldGrad)" stroke-width="0.6" opacity="0.55"/>
+                <path d="M27 68 V47 C27 36 34 29 41 29 C41 29 41 40 41 47 V68" fill="none" stroke="url(#goldGrad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M59 68 V47 C59 36 66 29 73 29 C73 29 73 40 73 47 V68" fill="none" stroke="url(#goldGrad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M41 47 L50 36 L59 47" fill="none" stroke="url(#goldGrad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M50 14 L52.5 20 L59 20.5 L54 24.8 L55.6 31 L50 27.4 L44.4 31 L46 24.8 L41 20.5 L47.5 20 Z" fill="url(#goldGrad)"/>
+                <line x1="22" y1="72" x2="78" y2="72" stroke="url(#goldGrad)" stroke-width="1.2" opacity="0.8"/>
             </svg>
-            
-            <div class="welcome-msg" id="welcomeUserMsg">أهلاً بك يا [اسم المستخدم]!</div>
+            <div class="brand-text">
+                <h1 class="brand-name">مطاعم وبروست<span>الاندلس</span></h1>
+                <p class="brand-tagline">نكهة يمنية أصيلة … توصيل بلمسة عصرية</p>
+            </div>
+        </div>
+        <div class="hero-badges-row">
+            <div class="trust-badge"><i class="fas fa-fire-burner"></i>طازج يومياً</div>
+            <div class="trust-badge"><i class="fas fa-star"></i>جودة مضمونة</div>
+            <div class="trust-badge"><i class="fas fa-bolt"></i>توصيل مضمون</div>
         </div>
     </div>
 
     <!-- ===== شريط البحث ===== -->
     <div class="search-wrapper">
         <div class="search-container">
+            <input type="text" id="searchInput" placeholder="ابحث في القائمة عن أي وجبة...">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" id="searchInput" placeholder="ابحث عن وجبتك المفضلة في الأندلس...">
         </div>
     </div>
 
     <div class="container">
         <!-- الصفحة الرئيسية -->
         <div id="homePage" class="page active-page">
-            <!-- السلايدر -->
+            <!-- [تعديل]: استخدام background-image لمنع الفراغات السوداء -->
             <div class="promo-slider-container" id="promoSliderContainer">
                 <div class="promo-track" id="promoTrack">
-                    <div class="promo-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80');">
+                    <div class="promo-slide" style="background-image: url('images/tabaq_mashawi.jpg');">
                         <div class="promo-caption">
-                            <h3>فخامة المشاوي الأندلسية</h3>
-                            <p>استمتع ببروست الأندلس الأصلي</p>
+                            <h3>طبق مشاوي الاندلس</h3>
+                            <p>تشكيلة فاخرة من الكباب والشيش طاووق والاوصال</p>
                         </div>
                     </div>
-                    <div class="promo-slide" style="background-image: url('https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80');">
+                    <div class="promo-slide" style="background-image: url('images/dajaj_mandi.jpg');">
                         <div class="promo-caption">
-                            <h3>بروست الدجاج</h3>
-                            <p>طعم لا يقاوم مع الصوصات الخاصة</p>
+                            <h3>دجاج مندي الاندلس</h3>
+                            <p>دجاج طازج مبهر بيهارات المندي ومطبوخ بعناية</p>
                         </div>
                     </div>
-                    <div class="promo-slide" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80');">
+                    <div class="promo-slide" style="background-image: url('images/kunafa_qishta_honey.jpg');">
                         <div class="promo-caption">
-                            <h3>كباب أندلسي</h3>
-                            <p>مشاوي طازجة على الفحم</p>
+                            <h3>كنافة بالقشطة والعسل البلدي</h3>
+                            <p>أشهى الحلويات الشرقية بنكهة أصيلة</p>
+                        </div>
+                    </div>
+                    <div class="promo-slide" style="background-image: url('images/sanoonat_samak.jpg');">
+                        <div class="promo-caption">
+                            <h3>صانونة سمك طازج</h3>
+                            <p>سمك طازج ومطبوخ مع الصوص على الحرضة</p>
                         </div>
                     </div>
                 </div>
@@ -349,20 +654,19 @@
                     <span class="dot active"></span>
                     <span class="dot"></span>
                     <span class="dot"></span>
+                    <span class="dot"></span>
                 </div>
             </div>
 
-            <!-- الأكثر طلباً (مطابق للصورة) -->
             <div class="popular-section">
-                <div class="section-header-title">الأكثر طلباً</div>
+                <div class="section-header-title">🔥 الأكثر طلباً</div>
                 <div class="popular-slider" id="popularSlider"></div>
             </div>
 
-            <!-- أقسام المنيو -->
-            <div class="section-header-title" style="margin-top: 10px;">أقسام المنيو</div>
+            <div class="section-header-title" style="margin-top: 10px;">📋 أقسام المنيو</div>
             <div class="categories-grid" id="categoriesGrid"></div>
 
-            <button id="trackOrderBtnHome" onclick="viewMyTracking()" style="display:none; width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:40px; font-weight:800; margin-top:20px;">📍 تتبع طلبي الحالي</button>
+            <button id="trackOrderBtnHome" onclick="viewMyTracking()">📍 تتبع طلبي الحالي</button>
         </div>
 
         <!-- صفحة القائمة والبحث -->
@@ -375,21 +679,29 @@
         <div id="checkoutPage" class="page">
             <div class="back-btn" onclick="goBackToMenu()"><i class="fas fa-arrow-right"></i> رجوع</div>
             <div class="page-heading"><i class="fas fa-receipt"></i> تفاصيل الطلب</div>
-            <div id="checkoutOrderSummary" class="checkout-card" style="background:var(--paper); padding:18px; border-radius:18px; border:1px solid var(--line);"></div>
+            <div id="checkoutOrderSummary" class="checkout-card"></div>
             <div style="margin-top: 22px;">
-                <label class="field-label" style="font-weight:800; font-size:0.85rem; margin-bottom:8px; display:block;"><i class="fas fa-location-dot"></i> عنوان التوصيل</label>
-                <button class="btn-location" onclick="getCurrentLocationForCheckout()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:30px; font-weight:800; margin-bottom:10px;"><i class="fas fa-location-crosshairs"></i> استخدم موقعي الحالي</button>
-                <div class="map-picker-row" onclick="openMapForCheckout()" style="background:var(--paper); border:1px solid var(--line); padding:14px; border-radius:30px; display:flex; justify-content:space-between; margin-bottom:10px;">
+                <label class="field-label"><i class="fas fa-location-dot"></i> عنوان التوصيل</label>
+                <button class="btn-location" onclick="getCurrentLocationForCheckout()"><i class="fas fa-location-crosshairs"></i> استخدم موقعي الحالي</button>
+                <div class="map-picker-row" onclick="openMapForCheckout()">
                     <span id="checkoutLocationTxt" style="color: var(--gray); font-weight: 700;">🗺️ حدد موقعك من الخريطة</span>
-                    <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i>
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 1.2rem;"></i>
                 </div>
-                <input type="text" id="checkoutAddressManual" class="manual-address-input" placeholder="أو اكتب عنوانك يدوياً التفصيلي" style="width:100%; padding:14px; border-radius:30px; border:1px solid var(--line); margin-bottom:10px;">
-                <div id="deliveryCostDisplay" class="delivery-cost-card" style="display:none; background:var(--primary); color:white; padding:12px; border-radius:12px; justify-content:space-between; font-weight:800;"><div>🚚 سعر التوصيل</div><div><strong id="deliveryCostValue">0</strong> ريال</div></div>
+                <input type="text" id="checkoutAddressManual" class="manual-address-input" placeholder="أو اكتب عنوانك يدوياً التفصيلي">
+                <div id="deliveryCostDisplay" class="delivery-cost-card" style="display:none;"><div>🚚 سعر التوصيل</div><div><strong id="deliveryCostValue">0</strong> ريال</div></div>
 
-                <label class="field-label" style="font-weight:800; font-size:0.85rem; margin-top:15px; margin-bottom:8px; display:block;"><i class="fas fa-wallet"></i> وسيلة الدفع</label>
-                <div class="payment-list" id="paymentList" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;"></div>
+                <label class="field-label" style="margin-top:14px;"><i class="fas fa-wallet"></i> وسيلة الدفع</label>
+                <div class="payment-list" id="paymentList">
+                    <div class="payment-option" data-method="jeeb"><div class="payment-icon"><i class="fas fa-wallet"></i></div><div class="payment-name">محفظة جيب</div></div>
+                    <div class="payment-option" data-method="onecash"><div class="payment-icon"><i class="fas fa-coins"></i></div><div class="payment-name">ون كاش</div></div>
+                    <div class="payment-option" data-method="floosak"><div class="payment-icon"><i class="fas fa-money-bill"></i></div><div class="payment-name">فلوسك</div></div>
+                    <div class="payment-option" data-method="jawaly"><div class="payment-icon"><i class="fas fa-mobile-alt"></i></div><div class="payment-name">جوالي</div></div>
+                    <div class="payment-option" data-method="kremi"><div class="payment-icon"><i class="fas fa-credit-card"></i></div><div class="payment-name">الكريمي</div></div>
+                    <div class="payment-option" data-method="easy"><div class="payment-icon"><i class="fas fa-bolt"></i></div><div class="payment-name">إيزي</div></div>
+                    <div class="payment-option" data-method="cash"><div class="payment-icon"><i class="fas fa-hand-holding-usd"></i></div><div class="payment-name">الدفع عند الاستلام</div></div>
+                </div>
                 <div id="paymentDetails" style="display:none; margin:10px 0;">
-                    <div class="payment-details-box" style="background:var(--bg-light); padding:12px; border-radius:20px; display:flex; justify-content:space-between; border:1px dashed var(--gold);"><span id="accountNumberText">777215154</span><button class="payment-copy-btn" onclick="copyAccountNumber()" style="background:var(--primary); color:white; border:none; padding:6px 14px; border-radius:20px;">نسخ</button></div>
+                    <div class="payment-details-box"><span id="accountNumberText">777215154</span><button class="payment-copy-btn" onclick="copyAccountNumber()">نسخ</button></div>
                 </div>
             </div>
             <button class="checkout-btn" onclick="confirmCheckoutOrder()" style="margin-top:16px;">✅ تأكيد الطلب وإرسال عبر واتساب</button>
@@ -405,36 +717,53 @@
         <!-- صفحة الإعدادات -->
         <div id="settingsPage" class="page">
             <div class="page-heading"><i class="fas fa-gear"></i> الإعدادات</div>
-            <div class="surface-card" style="background:var(--paper); border-radius:18px; padding:18px; border:1px solid var(--line);">
-                <div id="darkModeToggle" class="settings-row" style="display:flex; justify-content:space-between; padding:14px 4px; border-bottom:1px solid var(--line); cursor:pointer; font-weight:700;"><span><i class="fas fa-moon"></i> الوضع الليلي</span><span class="chevron" id="darkModeIcon">⚫</span></div>
-                <div id="whatsappSupport" class="settings-row" style="display:flex; justify-content:space-between; padding:14px 4px; border-bottom:1px solid var(--line); cursor:pointer; font-weight:700;"><span><i class="fab fa-whatsapp" style="color:#25D366"></i> خدمة العملاء</span><span class="chevron">⬅️</span></div>
-                <div id="shareApp" class="settings-row" style="display:flex; justify-content:space-between; padding:14px 4px; cursor:pointer; font-weight:700;"><span><i class="fas fa-share-alt"></i> مشاركة التطبيق</span><span class="chevron">⬅️</span></div>
-                <button id="settingsLogoutBtn" class="btn-danger-block" style="width:100%; padding:14px; background:var(--danger); color:white; border:none; border-radius:30px; font-weight:800; margin-top:16px;">تسجيل الخروج</button>
+            <div class="surface-card">
+                <div id="darkModeToggle" class="settings-row"><span><i class="fas fa-moon"></i> الوضع الليلي</span><span class="chevron" id="darkModeIcon">⚫</span></div>
+                <div id="whatsappSupport" class="settings-row"><span><i class="fab fa-whatsapp" style="color:#25D366"></i> خدمة العملاء</span><span class="chevron">⬅️</span></div>
+                <div id="shareApp" class="settings-row"><span><i class="fas fa-share-alt"></i> مشاركة التطبيق</span><span class="chevron">⬅️</span></div>
+                <button id="settingsLogoutBtn" class="btn-danger-block">تسجيل الخروج</button>
             </div>
         </div>
 
-        <!-- ===== صفحة المندوب ===== -->
+        <!-- ===== صفحة المندوب (2026) ===== -->
         <div id="driverPage" class="page">
-            <div class="driver-header-new" style="background:var(--primary); color:white; padding:22px; border-radius:18px; text-align:center; margin-bottom:20px;">
+            <div class="driver-header-new">
                 <h2>🛵 التوصيل الذكي</h2>
                 <p>مرحباً، <span id="driverNameDisplay"></span></p>
             </div>
-            <div class="stats-row" style="display:flex; gap:12px; margin-bottom:20px;">
-                <div class="stat-card-new" style="background:var(--paper); border-radius:18px; padding:14px; text-align:center; flex:1; border:1px solid var(--line);">
-                    <div class="stat-value" id="activeOrdersCount" style="font-size:1.4rem; font-weight:900; color:var(--primary);">0</div>
-                    <div class="stat-label" style="font-size:0.7rem; color:var(--gray);">طلبات نشطة</div>
+
+            <div class="stats-row">
+                <div class="stat-card-new">
+                    <div class="stat-value" id="activeOrdersCount">0</div>
+                    <div class="stat-label">طلبات نشطة</div>
                 </div>
-                <div class="stat-card-new" style="background:var(--paper); border-radius:18px; padding:14px; text-align:center; flex:1; border:1px solid var(--line);">
-                    <div class="stat-value" id="completedOrdersCount" style="font-size:1.4rem; font-weight:900; color:var(--primary);">0</div>
-                    <div class="stat-label" style="font-size:0.7rem; color:var(--gray);">مكتملة</div>
+                <div class="stat-card-new">
+                    <div class="stat-value" id="completedOrdersCount">0</div>
+                    <div class="stat-label">مكتملة</div>
                 </div>
             </div>
-            <div class="driver-tabs" style="display:flex; gap:8px; margin-bottom:20px; background:var(--paper); padding:8px; border-radius:50px; border:1px solid var(--line);">
-                <div class="driver-tab active" data-driver-tab="available" onclick="switchDriverTab('available')" style="flex:1; padding:9px; border-radius:40px; text-align:center; font-weight:800; font-size:0.8rem; cursor:pointer; background:var(--primary); color:white;">المتاحة</div>
-                <div class="driver-tab" data-driver-tab="active" onclick="switchDriverTab('active')" style="flex:1; padding:9px; border-radius:40px; text-align:center; font-weight:800; font-size:0.8rem; cursor:pointer; color:var(--gray);">نشطة</div>
+
+            <div class="driver-tabs">
+                <div class="driver-tab active" data-driver-tab="available" onclick="switchDriverTab('available')">
+                    <i class="fas fa-list"></i> المتاحة
+                </div>
+                <div class="driver-tab" data-driver-tab="active" onclick="switchDriverTab('active')">
+                    <i class="fas fa-truck"></i> نشطة
+                </div>
             </div>
-            <div class="driver-orders-container" id="driverOrdersList"></div>
-            <button id="driverLogoutBtn" style="width:100%; padding:12px; background:var(--danger); color:white; border:none; border-radius:30px; font-weight:800; margin-top:12px;">تسجيل الخروج</button>
+
+            <div class="driver-orders-container" id="driverOrdersList">
+                <div class="empty-orders">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>جاري تحميل الطلبات...</p>
+                </div>
+            </div>
+
+            <div class="sync-indicator" id="syncStatus">
+                <span class="loading-spinner"></span> جاري المزامنة...
+            </div>
+
+            <button id="driverLogoutBtn" style="width:100%; padding:12px; background:#ef4444; color:white; border:none; border-radius:30px; font-weight:800; margin-top:12px; cursor:pointer;">تسجيل الخروج</button>
         </div>
 
         <!-- ===== صفحة تفاصيل الطلب للمندوب ===== -->
@@ -442,18 +771,41 @@
             <div class="back-btn" onclick="goBackToDriver()">🔙 رجوع</div>
             <div id="orderDetailDriverContent"></div>
         </div>
+
+        <!-- ===== صفحة الإدارة ===== -->
+        <div id="adminPage" class="page">
+            <div class="admin-shell">
+                <div class="back-btn" onclick="showPage('homePage')"><i class="fas fa-arrow-right"></i> رجوع</div>
+                <h2 class="admin-heading">👨‍💼 لوحة الإدارة</h2>
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="restaurants">🍔 المطاعم</button>
+                    <button class="tab-btn" data-tab="items">🍽️ الأصناف</button>
+                    <button class="tab-btn" data-tab="orders">📦 الطلبات</button>
+                    <button class="tab-btn" data-tab="users">👥 المستخدمين</button>
+                    <button class="tab-btn" data-tab="settings">⚙️ الإعدادات</button>
+                </div>
+                <div class="tab-content active-tab" id="tab-restaurants">
+                    <div class="admin-section"><h4>إضافة مطعم</h4><input type="text" id="adminRestName" class="admin-input-light" placeholder="اسم المطعم"><select id="adminRestCat" class="admin-input-light"><option>بروست</option><option>بيتزا</option><option>برجر</option><option>شاورما</option><option>مشاوي</option><option>عصائر</option></select><input type="text" id="adminRestImg" class="admin-input-light" placeholder="رابط الصورة"><div class="admin-map-picker" onclick="openMapForAdmin()">🗺️ اختر موقع المطعم</div><input type="hidden" id="adminRestLat"><input type="hidden" id="adminRestLng"><button class="btn-primary" onclick="addNewRestaurant()">➕ إضافة</button></div>
+                    <div class="admin-section"><h4>قائمة المطاعم</h4><div id="adminRestaurantsList"></div></div>
+                </div>
+                <div class="tab-content" id="tab-items"><div class="admin-section"><select id="adminItemRestaurantSelect" class="admin-input-light"></select><div id="adminItemsList"></div><div style="margin-top:10px;"><input type="text" id="newItemName" class="admin-input-light" placeholder="اسم الصنف"><input type="number" id="newItemPrice" class="admin-input-light" placeholder="السعر"><button class="btn-primary" onclick="addNewItem()">+ إضافة صنف</button></div></div></div>
+                <div class="tab-content" id="tab-orders"><div class="admin-section"><div id="adminOrdersList"></div></div></div>
+                <div class="tab-content" id="tab-users"><div class="admin-section"><div id="adminUsersList"></div></div></div>
+                <div class="tab-content" id="tab-settings"><div class="admin-section"><div class="admin-setting-row"><span>🚖 سعر الكيلومتر:</span><input type="number" id="adminPricePerKm" value="180" class="admin-input-light" style="width:110px;"></div><div class="admin-setting-row"><span>💰 الحد الأدنى:</span><input type="number" id="adminMinDelivery" value="550" class="admin-input-light" style="width:110px;"></div><button class="btn-primary" onclick="saveDeliverySettings()">💾 حفظ</button></div></div>
+            </div>
+        </div>
     </div>
 
-    <!-- ===== شريط التنقل السفلي (مطابق للصورة) ===== -->
+    <!-- ===== شريط التنقل السفلي ===== -->
     <nav class="bottom-nav">
+        <div class="nav-item" data-page="settingsPage"><span class="nav-icon"><i class="fas fa-cog"></i></span><span>الإعدادات</span></div>
+        <div class="nav-item" onclick="toggleCart()"><span class="nav-icon"><i class="fas fa-shopping-cart"></i></span><span>السلة</span><span class="nav-badge" id="navCartBadge" style="display:none;">0</span></div>
+        <div class="nav-item" data-page="ordersPage"><span class="nav-icon"><i class="fas fa-clipboard-list"></i></span><span>طلباتي</span></div>
         <div class="nav-item active" data-page="homePage"><span class="nav-icon"><i class="fas fa-home"></i></span><span>الرئيسية</span></div>
-        <div class="nav-item" onclick="toggleCart()"><span class="nav-icon"><i class="fas fa-shopping-cart"></i></span><span>عربتي</span><span class="nav-badge" id="navCartBadge" style="display:none;">0</span></div>
-        <div class="nav-item" data-page="menuPage"><span class="nav-icon"><i class="fas fa-book-open"></i></span><span>القائمة</span></div>
-        <div class="nav-item" data-page="settingsPage"><span class="nav-icon"><i class="fas fa-user"></i></span><span>الحساب</span></div>
         <div class="nav-item" data-page="driverPage" id="navDriverBtn" style="display:none;"><span class="nav-icon"><i class="fas fa-motorcycle"></i></span><span>المندوب</span></div>
     </nav>
 
-    <!-- ===== السلة والنوافذ ===== -->
+    <!-- ===== السلة العائمة و الجانبية ===== -->
     <div id="floatCart" class="float-cart" onclick="goToCheckout()"><div><span id="cartCount">0</span> أصناف | <span id="cartTotal">0</span> ريال</div><div>عرض السلة <i class="fas fa-chevron-left"></i></div></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header"><span>🛒 سلة الطلبات</span><span class="cart-close" onclick="toggleCart()">✕</span></div>
@@ -465,11 +817,30 @@
         </div>
     </div>
 
+    <!-- ===== نوافذ منبثقة ===== -->
     <div id="toastMsg" class="toast"></div>
-    
     <div id="loginOverlay">
         <div class="login-card">
-            <div class="login-title">مطاعم وبروست الأندلس</div>
+            <svg class="login-logo-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="شعار مطاعم وبروست الاندلس">
+                <defs>
+                    <linearGradient id="goldGradLogin" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#e6c579"/>
+                        <stop offset="100%" stop-color="#93701f"/>
+                    </linearGradient>
+                    <linearGradient id="plateGradLogin" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#a3213c"/>
+                        <stop offset="100%" stop-color="#4a0c1a"/>
+                    </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="47" fill="url(#plateGradLogin)" stroke="url(#goldGradLogin)" stroke-width="2.5"/>
+                <circle cx="50" cy="50" r="40" fill="none" stroke="url(#goldGradLogin)" stroke-width="0.6" opacity="0.55"/>
+                <path d="M27 68 V47 C27 36 34 29 41 29 C41 29 41 40 41 47 V68" fill="none" stroke="url(#goldGradLogin)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M59 68 V47 C59 36 66 29 73 29 C73 29 73 40 73 47 V68" fill="none" stroke="url(#goldGradLogin)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M41 47 L50 36 L59 47" fill="none" stroke="url(#goldGradLogin)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M50 14 L52.5 20 L59 20.5 L54 24.8 L55.6 31 L50 27.4 L44.4 31 L46 24.8 L41 20.5 L47.5 20 Z" fill="url(#goldGradLogin)"/>
+                <line x1="22" y1="72" x2="78" y2="72" stroke="url(#goldGradLogin)" stroke-width="1.2" opacity="0.8"/>
+            </svg>
+            <div class="login-title">مطاعم وبروست الاندلس</div>
             <div class="login-subtitle">أشهى الأطباق الشعبية والمشاوي توصلك أينما كنت</div>
             <div class="role-buttons">
                 <div id="roleCustomer" class="role-btn active">🧑 عميل</div>
@@ -482,8 +853,10 @@
         </div>
     </div>
 
+    <!-- النافذة المنبثقة للصنف -->
     <div id="itemModal" class="item-modal-overlay">
         <div class="item-modal-card">
+            <!-- [تعديل]: استخدام background-image لمنع الفراغات السوداء -->
             <div id="modalImg" class="modal-img"></div>
             <div class="modal-content">
                 <h3 id="modalTitle"></h3>
@@ -496,6 +869,36 @@
         </div>
     </div>
 
+    <!-- ===== نافذة التقييم ===== -->
+    <div id="ratingModal" class="item-modal-overlay">
+        <div class="item-modal-card">
+            <div class="modal-content" style="text-align:center;">
+                <div style="display:flex; justify-content:center; margin-bottom:15px;"><i class="fas fa-star" style="font-size:3rem; color:var(--gold);"></i></div>
+                <h3 style="font-size:1.3rem; color:var(--primary);">⭐ تقييم الطلب</h3>
+                <p style="font-size:0.85rem; color:#888; margin-bottom:20px;">شكراً لك! نتمنى لك يوماً سعيداً 😊</p>
+                <div style="margin-bottom:20px; text-align:right;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><label style="font-weight:700; font-size:0.85rem;">تقييم المندوب</label><span id="rating_driver_text" style="font-size:0.8rem; color:#888;">لم يتم التقييم</span></div>
+                    <div class="rating-stars-wrapper" data-category="driver" data-rating="0"><i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i></div>
+                </div>
+                <div style="margin-bottom:20px; text-align:right;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><label style="font-weight:700; font-size:0.85rem;">تقييم الخدمة</label><span id="rating_service_text" style="font-size:0.8rem; color:#888;">لم يتم التقييم</span></div>
+                    <div class="rating-stars-wrapper" data-category="service" data-rating="0"><i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i></div>
+                </div>
+                <div style="margin-bottom:20px; text-align:right;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><label style="font-weight:700; font-size:0.85rem;">سرعة التوصيل</label><span id="rating_speed_text" style="font-size:0.8rem; color:#888;">لم يتم التقييم</span></div>
+                    <div class="rating-stars-wrapper" data-category="speed" data-rating="0"><i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i></div>
+                </div>
+                <div style="margin-bottom:20px; text-align:right;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><label style="font-weight:700; font-size:0.85rem;">تقييم المطعم</label><span id="rating_restaurant_text" style="font-size:0.8rem; color:#888;">لم يتم التقييم</span></div>
+                    <div class="rating-stars-wrapper" data-category="restaurant" data-rating="0"><i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i></div>
+                </div>
+                <div style="margin-bottom:20px; text-align:right;"><label style="font-weight:700; font-size:0.85rem; display:block; margin-bottom:4px;">📝 أضف تعليقك (اختياري)</label><textarea id="ratingComment" rows="2" placeholder="انطباعك عن التجربة..." style="width:100%; padding:10px; border-radius:12px; border:1px solid #ddd; font-size:0.8rem; background:#f8f6f4; resize:vertical;"></textarea></div>
+                <div class="modal-actions"><button class="btn-add-modal" onclick="submitRating()" style="flex:2;">إرسال التقييم</button><button class="btn-close-modal" onclick="closeRating()" style="flex:1;">تخطي</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== الخريطة ===== -->
     <div id="map-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:100000; display:none; flex-direction:column;">
         <div id="map" style="flex:1; width:100%; height:100%;"></div>
         <div class="map-controls" style="display:flex; background:var(--primary); padding:15px; gap:10px;">
@@ -504,8 +907,21 @@
         </div>
     </div>
 
+    <!-- ===== نافذة التتبع (2026 - تصميم عمودي واضح) ===== -->
     <div id="trackFullscreen">
         <div id="trackingFullscreenContainer"></div>
+    </div>
+
+    <!-- ===== نافذة التأكيد ===== -->
+    <div id="confirmationModal">
+        <div class="confirmation-card">
+            <h4 id="confirmModalTitle">تأكيد</h4>
+            <p id="confirmModalMessage"></p>
+            <div class="confirmation-actions">
+                <button id="modalConfirm" class="btn-confirm">نعم</button>
+                <button id="modalCancel" class="btn-cancel">إلغاء</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -584,74 +1000,89 @@
                 { n: "ثوم", p: 300, d: "صوص ثوم خاص", cat: "قسم البروست", photo: "thoom" },
                 { n: "شبس", p: 400, d: "شبس مع الصوصات", cat: "قسم البروست", photo: "shibs" },
                 { n: "عقدة بروست", p: 1300, d: "دجاج بروست مقطع ومطبوخ مع الخضار", cat: "قسم البروست", photo: "oqdat_brost" },
+
                 // قسم اللحم
                 { n: "برمة لحم", p: 2700, d: "لحم مبهر ومطبوخ يقدم مع المرقة", cat: "قسم اللحم", photo: "burma_lahm" },
                 { n: "راس حنيذ غنمي", p: 1000, d: "راس غنمي مطبوخ ومتبل بتتبيلة الحنيذ", cat: "قسم اللحم", photo: "ras_haneeth_ghanami" },
                 { n: "لحم حنيذ", p: 2700, d: "لحم طازج مبهر بيهارات الحنيذ ومطبوخ بعناية بالقصدير", cat: "قسم اللحم", photo: "lahm_haneeth" },
                 { n: "لحم مزموم", p: 2700, d: "لحم طازج مبهر بيهارات المزموم ومطبوخ بعناية", cat: "قسم اللحم", photo: "lahm_mazmoom" },
+
                 // قسم الدجاج
                 { n: "دجاج شواية", p: 550, d: "دجاج طازج ومتبل ومشوي بالشواية", cat: "قسم الدجاج", photo: "dajaj_shawaya" },
                 { n: "دجاج حنيذ بلدي", p: 600, d: "دجاج طازج مبهر بيهارات الحنيذ ومطبوخ بعناية بالقصدير", cat: "قسم الدجاج", photo: "dajaj_haneeth_baladi" },
                 { n: "دجاج مندي", p: 550, d: "دجاج طازج مبهر بيهارات المندي ومطبوخ بعناية", cat: "قسم الدجاج", photo: "dajaj_mandi" },
                 { n: "دجاج مضغوط مع الرز", p: 1150, d: "دجاج متبل ومطبوخ بقدر الضغط يقدم مع الرز والسحاوق", cat: "قسم الدجاج", photo: "dajaj_madghoot_ruz" },
+
                 // الماكولات البحرية
                 { n: "صانونة سمك", p: 1500, d: "سمك طازج ومطبوخ مع الصوص على الحرضة", cat: "الماكولات البحرية", photo: "sanoonat_samak" },
                 { n: "أصابع سمك", p: 1500, d: "4 اصابع سمك مقلية بالزيت مع التوابل والصوص", cat: "الماكولات البحرية", photo: "asabe_samak" },
                 { n: "ديرك اوصال بروست", p: 3500, d: "سمك الديرك الطازج والمقلي بالزيت بتوابل البروست", cat: "الماكولات البحرية", photo: "dhirak_awsal_brost" },
                 { n: "جمبري صانونة الاندلس", p: 1500, d: "جمبري طازج ومطبوخ مع الصوص بنكهة خاصة", cat: "الماكولات البحرية", photo: "jumbari_sanoonat" },
+
                 // الماكولات الشعبية
                 { n: "فحسة", p: 2500, d: "لحم - مرق - سحاوق", cat: "الماكولات الشعبية", photo: "fahsa" },
                 { n: "سلتة", p: 1500, d: "خضار - مرق - حلبة", cat: "الماكولات الشعبية", photo: "salta" },
                 { n: "عقدة لحم", p: 3300, d: "لحم مقطع ومطبوخ مع الخضار والبهارات", cat: "الماكولات الشعبية", photo: "oqdat_lahm" },
+
                 // المشاوي
                 { n: "طبق مشاوي", p: 2800, d: "كباب لحم - كباب دجاج - شيش طاووق - اوصال - اجنحة دجاج - صوصات - خبز", cat: "المشاوي", photo: "tabaq_mashawi" },
                 { n: "كباب لحم", p: 2000, d: "3 اسياخ كباب لحم مع السلطة والخبز والصوص", cat: "المشاوي", photo: "kabab_lahm" },
                 { n: "كباب دجاج", p: 2000, d: "3 اسياخ كباب دجاج مع السلطة والخبز والصوص", cat: "المشاوي", photo: "kabab_dajaj" },
                 { n: "شيش طاووق", p: 2000, d: "3 اسياخ شيش طاووق مع السلطة والخبز والصوص", cat: "المشاوي", photo: "shish_tawook" },
+
                 // الرز والمشكلات
                 { n: "بامية مع الملوخية", p: 600, d: "طبق بامية مع الملوخية", cat: "الرز والمشكلات", photo: "bamia_moulokhia" },
                 { n: "كيس خبز", p: 100, d: "خبز طازج", cat: "الرز والمشكلات", photo: "kees_khubz" },
                 { n: "ملوخية", p: 400, d: "ملوخية طازجة", cat: "الرز والمشكلات", photo: "moulokhia" },
                 { n: "رز مضغوط", p: 600, d: "رز مضغوط بنكهة مميزة", cat: "الرز والمشكلات", photo: "ruz_madghoot" },
+
                 // العريكة والمعصوب
                 { n: "عريكة صغير", p: 1000, d: "عريكة تمر بالمكسرات - حجم صغير", cat: "العريكة والمعصوب", photo: "areeka_sagheer" },
                 { n: "عريكة ملكي الاندلس", p: 1700, d: "عريكة تمر ملكية بالمكسرات الفاخرة", cat: "العريكة والمعصوب", photo: "areeka_malaki" },
                 { n: "معصوب", p: 600, d: "معصوب تمر بالمكسرات", cat: "العريكة والمعصوب", photo: "masoub" },
+
                 // الكنافة
                 { n: "كنافة بالقشطة", p: 600, d: "كنافة محشوة بالقشطة الطازجة", cat: "الكنافة", photo: "kunafa_qishta" },
                 { n: "كنافة بالقشطة وصوص الشكلاتة", p: 800, d: "كنافة بالقشطة مغطاة بصوص الشوكولاتة", cat: "الكنافة", photo: "kunafa_qishta_chocolate" },
                 { n: "كنافة بالقشطة والعسل البلدي", p: 1000, d: "كنافة بالقشطة مع العسل البلدي الأصلي", cat: "الكنافة", photo: "kunafa_qishta_honey" },
                 { n: "كنافة اللوتس", p: 1000, d: "كنافة بنكهة اللوتس المميزة", cat: "الكنافة", photo: "kunafa_lotus" },
+
                 // المحروقات
                 { n: "فاصوليا", p: 400, d: "فاصوليا محروقة بالبهارات", cat: "المحروقات", photo: "fasoolya" },
                 { n: "لحم صغار غنمي", p: 1500, d: "لحم صغار غنمي محروق ومتبل", cat: "المحروقات", photo: "lahm_sighar_ghanami" },
                 { n: "دقة بلدي عجل", p: 1200, d: "دقة بلدي من لحم العجل", cat: "المحروقات", photo: "daqqa_baladi_ijl" },
                 { n: "بيض سادة", p: 300, d: "بيض محروق سادة", cat: "المحروقات", photo: "bayd_sada" },
+
                 // المخبازة
                 { n: "ملوح", p: 300, d: "خبز ملوح طازج", cat: "المخبازة", photo: "maluh" },
                 { n: "الفتة", p: 400, d: "فتة تقدم مع التمر", cat: "المخبازة", photo: "fatta" },
                 { n: "فتة بر قشطة وعسل", p: 1200, d: "فتة بر بالقشطة والعسل", cat: "المخبازة", icon: "🍯" },
                 { n: "فتة دخن قشطة وعسل", p: 1200, d: "فتة دخن بالقشطة والعسل", cat: "المخبازة", photo: "fatta_dukhun_qishta_asal" },
+
                 // السلطات والمقبلات
                 { n: "حمص", p: 600, d: "حمص بزيت الزيتون", cat: "السلطات والمقبلات", photo: "hummus" },
                 { n: "متبل", p: 400, d: "متبل باذنجان بزيت الزيتون", cat: "السلطات والمقبلات", photo: "mutabbal" },
                 { n: "سحاوق احمر", p: 100, d: "سحاوق احمر حار طازج", cat: "السلطات والمقبلات", photo: "sahawiq_ahmar" },
                 { n: "سحاوق جبن", p: 300, d: "سحاوق بالجبن", cat: "السلطات والمقبلات", photo: "sahawiq_jubn" },
+
                 // الساندوتشات
                 { n: "سندوتش زنجر", p: 1000, d: "زنجر مقرمش مع الخس والطماط والصوصات", cat: "الساندوتشات", photo: "sandwich_zanjar" },
                 { n: "سندوتش فاهيتا", p: 900, d: "فاهيتا دجاج مع الخضار والصوصات", cat: "الساندوتشات", photo: "sandwich_fahita" },
                 { n: "برجر دجاج", p: 800, d: "برجر دجاج مع الجبن والخضار", cat: "الساندوتشات", photo: "burger_dajaj" },
                 { n: "برجر لحم", p: 1000, d: "برجر لحم مع الجبن والخضار", cat: "الساندوتشات", photo: "burger_lahm" },
+
                 // الشاورما
                 { n: "سندوتش شاورما", p: 400, d: "شاورما دجاج طازجة مع الصوصات", cat: "الشاورما", photo: "sandwich_shawarma" },
                 { n: "صحن شاورما", p: 1300, d: "صحن شاورما مع الشبس والسلطة والصوصات", cat: "الشاورما", photo: "sahn_shawarma" },
                 { n: "فرايز شاورما الاندلس", p: 1500, d: "فرايز مع قطع شاورما مقرمشة وصوصات خاصة", cat: "الشاورما", photo: "frize_shawarma_andalus" },
+
                 // المشروبات
                 { n: "شاي احمر", p: 100, d: "شاي ساخن", cat: "قسم المشروبات", photo: "shay_ahmar" },
                 { n: "شاي حليب", p: 150, d: "شاي بالحليب", cat: "قسم المشروبات", photo: "shay_haleeb" },
                 { n: "شاي حليب مفور", p: 200, d: "شاي حليب مفور ساخن", cat: "قسم المشروبات", photo: "shay_haleeb_mafoor" },
                 { n: "قهوة بن", p: 100, d: "قهوة بن سادة", cat: "قسم المشروبات", photo: "qahwat_bunn" },
                 { n: "ماء معدني", p: 0, d: "زجاجة ماء معدني", cat: "قسم المشروبات", icon: "💧" },
+
                 // العصائر
                 { n: "عصير برتقال كبس", p: 800, d: "عصير برتقال طازج", cat: "العصائر", photo: "aseer_burtuqal" },
                 { n: "عصير عوار قلب", p: 700, d: "عصير عوار قلب مميز", cat: "العصائر", photo: "aseer_awar_qalb" },
@@ -812,6 +1243,7 @@
                 } else {
                     container.innerHTML = cart.map((item, i) => `
                         <div class="cart-item">
+                            <!-- [تعديل]: استخدام background-image لمنع الفراغات السوداء -->
                             <div class="cart-item-img" style="background-image: url('${item.photo ? PHOTOS[item.photo] : ''}');">
                                 ${item.photo ? '' : (item.icon || '🍽️')}
                             </div>
@@ -1082,10 +1514,12 @@
             let order = allOrders.find(o => o.id == id);
             if (!order) return;
             
+            // حالات التتبع بالترتيب
             let steps = ['pending', 'preparing', 'on_the_way', 'arrived', 'delivered'];
             let idx = steps.indexOf(order.status);
             if (idx === -1) idx = 0;
 
+            // أيقونات FontAwesome لكل حالة
             let stepIcons = {
                 pending: 'fa-clock',
                 preparing: 'fa-utensils',
@@ -1094,6 +1528,7 @@
                 delivered: 'fa-check-double'
             };
 
+            // بناء خطوات التتبع العمودية
             let stepsHtml = steps.map((s, i) => {
                 let stepClass = '';
                 if (i < idx) stepClass = 'completed';
@@ -1263,25 +1698,26 @@
             document.getElementById('ratingModal').style.display = 'none';
         }
 
-        // تم تنفيذ هذا الجزء مباشرة بدون DOMContentLoaded لضمان العمل
-        document.querySelectorAll('.rating-stars-wrapper').forEach(wrapper => {
-            wrapper.addEventListener('click', function(e) {
-                let star = e.target.closest('.fa-star');
-                if (!star) return;
-                let value = parseInt(star.dataset.value);
-                let category = this.dataset.category;
-                ratingData[category] = value;
-                this.querySelectorAll('.fa-star').forEach(s => {
-                    let val = parseInt(s.dataset.value);
-                    if (val <= value) {
-                        s.classList.remove('far');
-                        s.classList.add('fas', 'active');
-                    } else {
-                        s.classList.remove('fas', 'active');
-                        s.classList.add('far');
-                    }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.rating-stars-wrapper').forEach(wrapper => {
+                wrapper.addEventListener('click', function(e) {
+                    let star = e.target.closest('.fa-star');
+                    if (!star) return;
+                    let value = parseInt(star.dataset.value);
+                    let category = this.dataset.category;
+                    ratingData[category] = value;
+                    this.querySelectorAll('.fa-star').forEach(s => {
+                        let val = parseInt(s.dataset.value);
+                        if (val <= value) {
+                            s.classList.remove('far');
+                            s.classList.add('fas', 'active');
+                        } else {
+                            s.classList.remove('fas', 'active');
+                            s.classList.add('far');
+                        }
+                    });
+                    document.getElementById(`rating_${category}_text`).innerText = `${value} من 5 نجوم`;
                 });
-                document.getElementById(`rating_${category}_text`).innerText = `${value} من 5 نجوم`;
             });
         });
 
@@ -1494,7 +1930,7 @@
         }
 
         // ================================================================
-        //  تغيير حالة الطلب (للمندوب)
+        //  تغيير حالة الطلب (للمندوب) - مع حالات جديدة
         // ================================================================
         function confirmStatusChange(orderId, newStatus) {
             if (confirm(`هل أنت متأكد من تغيير الحالة إلى "${getStatusText(newStatus)}"؟`)) {
@@ -1510,7 +1946,7 @@
         }
 
         // ================================================================
-        //  عرض تفاصيل الطلب (للمندوب)
+        //  عرض تفاصيل الطلب (للمندوب) - صفحة كاملة
         // ================================================================
         async function viewDriverOrderDetail(orderId) {
             showLoading('جار تحميل تفاصيل الطلب...', '📋', 'يتم جلب البيانات الآن');
@@ -1694,8 +2130,8 @@
             document.getElementById('categoriesGrid').innerHTML = html;
         }
 
+        // [تعديل]: استخدام background-image لمنع الفراغات السوداء في الأكثر طلباً
         function renderPopularItems() {
-            // تم تصحيح اسم صانونة
             const popularNames = ["طبق مشاوي", "دجاج مندي", "كنافة بالقشطة والعسل البلدي", "صانونة سمك", "برمة لحم", "سندوتش زنجر"];
             const popularItems = restaurantData.items.filter(i => popularNames.includes(i.n));
             let html = popularItems.map(item => `
@@ -1743,6 +2179,7 @@
             document.getElementById('searchInput').value = '';
         };
 
+        // [تعديل]: استخدام background-image لمنع الفراغات السوداء في المنيو
         function renderMenu(itemsArray = null, targetContainerId = 'menuContent') {
             const itemsToRender = itemsArray || restaurantData.items;
             let itemsHtml = `<div class="menu-list">`;
@@ -1780,6 +2217,7 @@
             showToast(`✅ تم إضافة ${item.n}`);
         }
 
+        // [تعديل]: استخدام background-image لمنع الفراغات السوداء في النافذة المنبثقة
         function openItemModal(itemName) {
             currentModalItem = restaurantData.items.find(i => i.n === itemName);
             if (!currentModalItem) return;
@@ -1948,19 +2386,10 @@
         }
 
         // ================================================================
-        //  السلايدر
+        //  السلايدر (مع السحب اليدوي والتلقائي)
         // ================================================================
         let promoIndex = 0;
         const dotsCount = 4;
-        let autoSlideTimer = null;
-
-        function startAutoSlide() {
-            if (autoSlideTimer) clearInterval(autoSlideTimer);
-            autoSlideTimer = setInterval(() => {
-                promoIndex = (promoIndex + 1) % dotsCount;
-                updateSlider();
-            }, 3000);
-        }
 
         function updateSlider() {
             const track = document.getElementById('promoTrack');
@@ -1973,12 +2402,19 @@
             }
         }
 
+        /* [تعديل]: تم تغيير الوقت من 3000 ملي ثانية إلى 2000 ملي ثانية (ثانيتين) */
+        let autoSlideTimer = setInterval(() => {
+            promoIndex = (promoIndex + 1) % dotsCount;
+            updateSlider();
+        }, 2000);
+
         const sliderContainer = document.getElementById('promoSliderContainer');
         let startX = 0, isDragging = false;
 
         sliderContainer.addEventListener('touchstart', e => {
             startX = e.touches[0].clientX;
             isDragging = true;
+            clearInterval(autoSlideTimer);
         });
 
         sliderContainer.addEventListener('touchmove', e => {
@@ -1996,14 +2432,12 @@
             }
         });
 
-        sliderContainer.addEventListener('touchend', () => { 
-            isDragging = false; 
-            startAutoSlide(); 
-        });
+        sliderContainer.addEventListener('touchend', () => { isDragging = false; });
 
         sliderContainer.addEventListener('mousedown', e => {
             startX = e.clientX;
             isDragging = true;
+            clearInterval(autoSlideTimer);
         });
 
         sliderContainer.addEventListener('mousemove', e => {
@@ -2021,22 +2455,13 @@
             }
         });
 
-        sliderContainer.addEventListener('mouseup', () => { 
-            isDragging = false; 
-            startAutoSlide(); 
-        });
-        sliderContainer.addEventListener('mouseleave', () => { 
-            isDragging = false; 
-            startAutoSlide(); 
-        });
+        sliderContainer.addEventListener('mouseup', () => { isDragging = false; });
+        sliderContainer.addEventListener('mouseleave', () => { isDragging = false; });
 
         // ================================================================
         //  تسجيل الدخول والخروج
         // ================================================================
         function initLogin() {
-            // إظهار شاشة الدخول فقط عند الحاجة
-            document.getElementById('loginOverlay').style.display = 'flex';
-            
             const roleCustomer = document.getElementById('roleCustomer');
             const roleDriver = document.getElementById('roleDriver');
             const passwordField = document.getElementById('passwordField');
@@ -2064,18 +2489,22 @@
 
                 showLoading('جار تسجيل الدخول...', '🔐', 'يرجى الانتظار');
                 let role = isDriver ? 'driver' : 'customer';
-                
                 loginBtn.disabled = true;
                 loginBtn.innerText = '...جاري الدخول';
-
-                // حفظ البيانات محلياً فوراً
+                try {
+                    await fetch(`${FIREBASE_URL}/users/${phone}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ phone, name, role, isBusy: false })
+                    });
+                } catch(err) {
+                    showToast('⚠️ تعذر الاتصال بالخادم، تم الدخول محلياً');
+                }
                 currentUser = { role, phone, name };
                 localStorage.setItem('waselny_user', JSON.stringify(currentUser));
-                
-                // إخفاء شاشة الدخول فوراً (لمنع التجمد)
                 document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('welcomeUserMsg').innerText = `أهلاً بك يا ${name}!`;
-                
+                loginBtn.disabled = false;
+                loginBtn.innerText = 'دخول';
+                hideLoading();
                 if (role === 'driver') {
                     showPage('driverPage');
                     document.getElementById('driverNameDisplay').innerText = name;
@@ -2083,18 +2512,7 @@
                 } else {
                     showPage('homePage');
                 }
-                hideLoading();
                 showToast(`أهلاً ${name}`);
-                
-                // إرسال البيانات للخادم في الخلفية (بدون تعليق الواجهة)
-                fetch(`${FIREBASE_URL}/users/${phone}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ phone, name, role, isBusy: false })
-                }).catch(err => console.log('Sync error:', err));
-                
-                // إعادة تفعيل الزر
-                loginBtn.disabled = false;
-                loginBtn.innerText = 'دخول';
             };
         }
 
@@ -2146,7 +2564,6 @@
             try {
                 currentUser = JSON.parse(savedUser);
                 document.getElementById('loginOverlay').style.display = 'none';
-                document.getElementById('welcomeUserMsg').innerText = `أهلاً بك يا ${currentUser.name}!`;
                 if (currentUser.role === 'driver') {
                     showPage('driverPage');
                     document.getElementById('driverNameDisplay').innerText = currentUser.name;
@@ -2171,10 +2588,8 @@
             });
         });
         renderAdminRestaurantsList();
-        
-        startAutoSlide();
 
-        console.log('✅ تم تحميل النظام بالكامل بنجاح - النسخة المطابقة للصورة');
+        console.log('✅ تم تحميل النظام بالكامل بنجاح - النسخة 2026 - الاندلس');
     </script>
 </body>
 </html>
