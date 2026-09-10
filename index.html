@@ -19,7 +19,6 @@
             color: var(--dark); 
             direction: rtl; 
             padding-bottom: 80px; 
-            /* زخرفة إسلامية خفيفة في الخلفية */
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c69a44' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         :root {
@@ -93,7 +92,7 @@
             padding: 20px 18px 10px;
             text-align: center;
         }
-        .hero-topbar { display: none; /* إخفاء الشريط العلوي لمطابقة الصورة */ }
+        .hero-topbar { display: none; }
         
         .hero-brand { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
@@ -235,7 +234,7 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ===== شاشة الدخول ===== */
-        #loginOverlay { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; background: var(--primary-dark); padding: 20px; }
+        #loginOverlay { position: fixed; inset: 0; z-index: 100000; display: none; align-items: center; justify-content: center; background: var(--primary-dark); padding: 20px; }
         .login-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(20px); border-radius: 34px; padding: 38px 26px; width: 100%; max-width: 380px; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.1); }
         .login-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 4px; color: var(--gold); }
         .login-subtitle { color: rgba(255,255,255,0.7); font-size: 0.8rem; margin-bottom: 24px; }
@@ -509,9 +508,6 @@
         <div id="trackingFullscreenContainer"></div>
     </div>
 
-    <!-- ================================================================
-         السكربت الكامل الخاص بك (تم الحفاظ عليه بالكامل)
-    ================================================================ -->
     <script>
         // ================================================================
         //  بيانات مطاعم وبروست الاندلس (ثابتة)
@@ -1267,26 +1263,25 @@
             document.getElementById('ratingModal').style.display = 'none';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.rating-stars-wrapper').forEach(wrapper => {
-                wrapper.addEventListener('click', function(e) {
-                    let star = e.target.closest('.fa-star');
-                    if (!star) return;
-                    let value = parseInt(star.dataset.value);
-                    let category = this.dataset.category;
-                    ratingData[category] = value;
-                    this.querySelectorAll('.fa-star').forEach(s => {
-                        let val = parseInt(s.dataset.value);
-                        if (val <= value) {
-                            s.classList.remove('far');
-                            s.classList.add('fas', 'active');
-                        } else {
-                            s.classList.remove('fas', 'active');
-                            s.classList.add('far');
-                        }
-                    });
-                    document.getElementById(`rating_${category}_text`).innerText = `${value} من 5 نجوم`;
+        // تم تنفيذ هذا الجزء مباشرة بدون DOMContentLoaded لضمان العمل
+        document.querySelectorAll('.rating-stars-wrapper').forEach(wrapper => {
+            wrapper.addEventListener('click', function(e) {
+                let star = e.target.closest('.fa-star');
+                if (!star) return;
+                let value = parseInt(star.dataset.value);
+                let category = this.dataset.category;
+                ratingData[category] = value;
+                this.querySelectorAll('.fa-star').forEach(s => {
+                    let val = parseInt(s.dataset.value);
+                    if (val <= value) {
+                        s.classList.remove('far');
+                        s.classList.add('fas', 'active');
+                    } else {
+                        s.classList.remove('fas', 'active');
+                        s.classList.add('far');
+                    }
                 });
+                document.getElementById(`rating_${category}_text`).innerText = `${value} من 5 نجوم`;
             });
         });
 
@@ -1499,7 +1494,7 @@
         }
 
         // ================================================================
-        //  تغيير حالة الطلب (للمندوب) - مع حالات جديدة
+        //  تغيير حالة الطلب (للمندوب)
         // ================================================================
         function confirmStatusChange(orderId, newStatus) {
             if (confirm(`هل أنت متأكد من تغيير الحالة إلى "${getStatusText(newStatus)}"؟`)) {
@@ -1515,7 +1510,7 @@
         }
 
         // ================================================================
-        //  عرض تفاصيل الطلب (للمندوب) - صفحة كاملة
+        //  عرض تفاصيل الطلب (للمندوب)
         // ================================================================
         async function viewDriverOrderDetail(orderId) {
             showLoading('جار تحميل تفاصيل الطلب...', '📋', 'يتم جلب البيانات الآن');
@@ -1699,8 +1694,8 @@
             document.getElementById('categoriesGrid').innerHTML = html;
         }
 
-        // [تعديل]: استخدام الخلفية لقائمة الأكثر طلباً لمنع الفراغات
         function renderPopularItems() {
+            // تم تصحيح اسم صانونة
             const popularNames = ["طبق مشاوي", "دجاج مندي", "كنافة بالقشطة والعسل البلدي", "صانونة سمك", "برمة لحم", "سندوتش زنجر"];
             const popularItems = restaurantData.items.filter(i => popularNames.includes(i.n));
             let html = popularItems.map(item => `
@@ -1748,7 +1743,6 @@
             document.getElementById('searchInput').value = '';
         };
 
-        // [تعديل]: استخدام الخلفية لقائمة المنيو لمنع الفراغات
         function renderMenu(itemsArray = null, targetContainerId = 'menuContent') {
             const itemsToRender = itemsArray || restaurantData.items;
             let itemsHtml = `<div class="menu-list">`;
@@ -1954,7 +1948,7 @@
         }
 
         // ================================================================
-        //  السلايدر (مع السحب اليدوي والتلقائي)
+        //  السلايدر
         // ================================================================
         let promoIndex = 0;
         const dotsCount = 4;
@@ -2040,6 +2034,9 @@
         //  تسجيل الدخول والخروج
         // ================================================================
         function initLogin() {
+            // إظهار شاشة الدخول فقط عند الحاجة
+            document.getElementById('loginOverlay').style.display = 'flex';
+            
             const roleCustomer = document.getElementById('roleCustomer');
             const roleDriver = document.getElementById('roleDriver');
             const passwordField = document.getElementById('passwordField');
@@ -2067,24 +2064,16 @@
 
                 showLoading('جار تسجيل الدخول...', '🔐', 'يرجى الانتظار');
                 let role = isDriver ? 'driver' : 'customer';
+                
                 loginBtn.disabled = true;
                 loginBtn.innerText = '...جاري الدخول';
-                try {
-                    await fetch(`${FIREBASE_URL}/users/${phone}.json`, {
-                        method: 'PUT',
-                        body: JSON.stringify({ phone, name, role, isBusy: false })
-                    });
-                } catch(err) {
-                    showToast('⚠️ تعذر الاتصال بالخادم، تم الدخول محلياً');
-                }
+
+                // حفظ البيانات محلياً فوراً
                 currentUser = { role, phone, name };
                 localStorage.setItem('waselny_user', JSON.stringify(currentUser));
-                document.getElementById('loginOverlay').style.display = 'none';
-                loginBtn.disabled = false;
-                loginBtn.innerText = 'دخول';
-                hideLoading();
                 
-                // تحديث رسالة الترحيب
+                // إخفاء شاشة الدخول فوراً (لمنع التجمد)
+                document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('welcomeUserMsg').innerText = `أهلاً بك يا ${name}!`;
                 
                 if (role === 'driver') {
@@ -2094,7 +2083,18 @@
                 } else {
                     showPage('homePage');
                 }
+                hideLoading();
                 showToast(`أهلاً ${name}`);
+                
+                // إرسال البيانات للخادم في الخلفية (بدون تعليق الواجهة)
+                fetch(`${FIREBASE_URL}/users/${phone}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ phone, name, role, isBusy: false })
+                }).catch(err => console.log('Sync error:', err));
+                
+                // إعادة تفعيل الزر
+                loginBtn.disabled = false;
+                loginBtn.innerText = 'دخول';
             };
         }
 
